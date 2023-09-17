@@ -1,11 +1,16 @@
 # 🎶 PYMusicBot
-A music bot designed to be robust and be hosted on one Discord server only
+A music bot designed to be robust (by using FFmpeg) and to be hosted on one Discord server only
+
+# 📌 Features
+- Robust
+- Uses FFmpeg so it can play basically any file format with any codec
+- Less chances of it breaking because it can only be hosted on one Discord server only
 
 # 🔧 How to setup
-Check our wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
+Check the wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
 
 # ❓ But why?
-This bot was made for [Omniarchive](https://omniarchive.uk) due to it lacking a proper music bot<br>
+This bot was made for [Omniarchive](https://omniarchive.uk) due to them lacking a proper music bot<br>
 This code base is based on the [self-bot version](https://github.com/vlOd2/SelfMusicBot)
 
 # 👨‍💻 Contributing
