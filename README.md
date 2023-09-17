@@ -1,17 +1,22 @@
-# SelfMusicBot
-A music bot designed to be hosted on normal Discord accounts
-## ⚠ USING THIS SELF-BOT IS AGAINST DISCORD'S TOS AND MAY GET YOUR ACCOUNT BANNED
+# 🎶 PYMusicBot
+A music bot designed to be robust and be hosted on one Discord server only
 
-# Required packages
-This bot needs the following packages: `PyNaCl, discord.py-self, yt-dlp`<br>
-- Windows: `python -m pip install PyNaCl discord.py-self yt-dlp`
-- Linux: `python3 -m pip install PyNaCl discord.py-self yt-dlp`
+# 🔧 How to setup
+Check our wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
 
-# Required in path
-This bot needs FFmpeg and FFprobe to be in the path environment variable<br>
-[Here](https://ffmpeg.org/download.html) you can find download instructions for FFmpeg and FFprobe<br>
-To add them to the path environment variable on Windows, you can move both of them in `C:\Windows`
+# ❓ But why?
+This bot was made for [Omniarchive](https://omniarchive.uk) due to it lacking a proper music bot<br>
+This code base is based on the [self-bot version](https://github.com/vlOd2/SelfMusicBot)
 
-# But why?
-This self-bot was made as a test for [Omniarchive](https://omniarchive.uk) due to it lacking a proper music bot<br>
-This code base will be used for a proper normal bot for them
+# 👨‍💻 Contributing
+You may proceed with the following steps if you wish to contribute to this project
+
+1. Fork or clone this repository
+2. Make your changes
+3. Commit & push your changes
+4. Submit a pull request here
+
+# ⚖ License
+This project is licensed under the GPLv3 license
+<br>
+You may refer to the "LICENSE" file for more information
