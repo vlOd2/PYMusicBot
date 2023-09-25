@@ -3,17 +3,26 @@ import discord
 from datetime import datetime, timezone
 
 def get_video_duration(input):
-    args = f"ffprobe -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input}"
-    process = subprocess.Popen(args, text=True, stdout=subprocess.PIPE)
-    ffprobe_result = process.stdout.readline().strip()
-    process.kill()
+    ffprobe_path = 'ffprobe'
 
-    if not ffprobe_result or len(ffprobe_result) < 1:
-        return -1
-    
+    args = [ffprobe_path, '-v', 'quiet', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', input]
+
     try:
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout, stderr = process.communicate()
+
+        if stderr:
+            raise Exception(f"Error running ffprobe: {stderr}")
+
+        ffprobe_result = stdout.strip()
+
+        if not ffprobe_result or len(ffprobe_result) < 1:
+            return -1
+
         return int(float(ffprobe_result) * 1000)
-    except:
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return -1
 
 def get_secs_formatted(seconds):
@@ -32,7 +41,7 @@ def get_progress_bar(blocks_done, size=12):
             progress_bar += ":radio_button:"
         else:
             progress_bar += "▬"
-    
+
     return progress_bar
 
 def get_logger_file_name():
