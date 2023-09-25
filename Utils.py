@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 def get_video_duration(input):
     args = f"ffprobe -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input}"
-    process = subprocess.Popen(args, text=True, stdout=subprocess.PIPE)
+    process = subprocess.Popen(args, shell=True, text=True, stdout=subprocess.PIPE)
     ffprobe_result = process.stdout.readline().strip()
     process.kill()
 
