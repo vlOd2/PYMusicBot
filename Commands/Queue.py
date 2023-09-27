@@ -5,7 +5,7 @@ from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 from FFmpegAudioSource import FFmpegAudioSource
 
-@CommandDeclaration("queue", CommandHandler("Provides a list of the queue"))
+@CommandDeclaration("queue", CommandHandler("Provides a list of the queue", needs_listening_executor=False))
 async def cmd_queue(instance : PYMusicBot, 
              message : discord.message.Message, 
              channel : discord.channel.TextChannel, 

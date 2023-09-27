@@ -19,4 +19,4 @@ async def cmd_remove(instance : PYMusicBot,
         return
     
     del instance.music_queue[song_number]
-    await message.add_reaction("✅")
+    await Utils.add_reaction(message, "✅")

@@ -11,14 +11,34 @@ async def cmd_join(instance : PYMusicBot,
              channel : discord.channel.TextChannel, 
              guild : discord.guild.Guild,
              args : list[str]):
-    if not instance.voice_channel:
-        await message.reply(embed=Utils.get_error_embed("The voice channel for me to join into hasn't been defined!"))
+    if not message.author.voice:
+        await message.reply(embed=Utils.get_error_embed("You are currently not in a voice channel!"))
+        return
+    author_voice_channel = message.author.voice.channel
+
+    if Utils.is_something_banned(author_voice_channel.id, 
+                                 instance.config.BANNED_VOICE_CHANNELS, 
+                                 instance.config.BANNED_VOICE_CHANNELS_IS_WHITELIST):
+        await message.reply(embed=Utils.get_error_embed("Sorry, but your voice channel has been blocked from being used!"))
+        return
+
+    if instance.is_joining:
+        await message.reply(embed=Utils.get_error_embed("I am already attempting to join a channel!"))
         return
 
     if instance.get_voice_client():
-        await message.reply(embed=Utils.get_error_embed("I am already in the voice channel!"))
+        await instance.leave_voice_channel()
+        
+    instance.voice_channel = author_voice_channel
+    instance.logger.info(f"Joining voice channel {author_voice_channel.id}...")
+
+    try:
+        instance.is_joining = True
+        instance._voice_client = await instance.voice_channel.connect()
+    except TimeoutError:
+        await message.reply(embed=Utils.get_error_embed("Timed out whilst trying to join! Try again?"))
         return
-    
-    instance.logger.info(f"Joining voice channel {instance.voice_channel.id} in guild {guild.id}...")
-    instance._voice_client = await instance.voice_channel.connect()
-    await message.add_reaction("✅")
+    finally:
+        instance.is_joining = False
+
+    await Utils.add_reaction(message, "✅")

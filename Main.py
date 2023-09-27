@@ -2,8 +2,6 @@ import os
 import sys
 import logging
 import Utils
-from time import time
-from Config import Config
 from Commands import *
 from PYMusicBot import PYMusicBot
 
@@ -37,38 +35,11 @@ def load_token():
 
     return token
 
-def load_config():
-    logger = logging.getLogger()
-    config = Config()
+def main():
+    setup_logger()
+    logging.getLogger().info("Running PYMusicBot... To quit, press Ctrl + C")
+    instance = PYMusicBot()
+    instance.run(load_token(), log_handler=None)
 
-    def create_default_config():
-        logger.info("Creating default config")
-        config_file = open("config.json", "w")
-        config_file.write(config.export_json())
-        config_file.close()
-
-    if not os.path.exists("config.json"):
-        create_default_config()
-    else:
-        logger.info("Loading config...")
-        try:
-            config_file = open("config.json", "r")
-            config.import_json(config_file.read())
-            config_file.close()
-            logger.info(f"Loaded config")
-        except Exception as ex:
-            logger.warn(f"Unable to load the config: {ex}")
-            os.rename("config.json", f"config_broken_{int(time() * 1000)}.json")
-            create_default_config()
-
-    if config.OPERATING_GUILD == None or config.VOICE_CHANNEL == None:
-        logger.fatal("No operating guild or voice channel specified in config!")
-        return
-
-    return config
-
-setup_logger()
-instance = PYMusicBot(load_config())
-
-logging.getLogger().info("Running PYMusicBot... To quit, press Ctrl + C")
-instance.run(load_token(), log_handler=None)
+if __name__ == "__main__":
+    main()

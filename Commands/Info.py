@@ -5,9 +5,9 @@ from PYMusicBot import PYMusicBot
 from FFmpegAudioSource import FFmpegAudioSource
 from time import time
 
-@CommandDeclaration("info", CommandHandler("Gets information on what is currently being streamed"))
-@CommandDeclaration("nowplaying", CommandHandler("Alias for the command \"info\""))
-@CommandDeclaration("np", CommandHandler("Alias for the command \"info\""))
+@CommandDeclaration("info", CommandHandler("Gets information on what is currently being streamed", needs_listening_executor=False))
+@CommandDeclaration("nowplaying", CommandHandler("Alias for the command \"info\"", needs_listening_executor=False))
+@CommandDeclaration("np", CommandHandler("Alias for the command \"info\"", needs_listening_executor=False))
 async def cmd_info(instance : PYMusicBot, 
              message : discord.message.Message, 
              channel : discord.channel.TextChannel, 

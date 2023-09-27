@@ -1,6 +1,8 @@
 import subprocess
 import discord
+import fnmatch
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 def get_video_duration(input):
     args = f"ffprobe -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input}"
@@ -51,3 +53,35 @@ def get_embed(title, description, color):
 
 def get_error_embed(message):
     return get_embed(":x: Error", message, (255, 0, 0))
+
+# Convenience function for adding a reaction
+async def add_reaction(message, reaction):
+    try:
+        await message.add_reaction(reaction)
+    except:
+        pass
+
+def is_valid_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+    
+def is_host_banned(host, ban_list, whitelist_mode):
+    in_ban_list = any([fnmatch.fnmatch(host, entry) for entry in ban_list])
+
+    if not whitelist_mode and in_ban_list:
+        return True
+    elif whitelist_mode and not in_ban_list:
+        return True
+    else:
+        return False
+
+def is_something_banned(entry, ban_list, whitelist_mode):
+    if not whitelist_mode and entry in ban_list:
+        return True
+    elif whitelist_mode and entry not in ban_list:
+        return True
+    else:
+        return False

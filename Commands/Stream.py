@@ -2,6 +2,7 @@ from typing import Any
 import discord
 import Utils
 import YoutubeDL
+from urllib.parse import urlparse
 from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 
@@ -37,14 +38,27 @@ async def cmd_stream(instance : PYMusicBot,
     try:
         instance.is_resolving = True
 
-        instance.logger.info("Getting flat data first for query to know if it is a playlist")
+        instance.logger.info("Checking if query is an URL...")
+        if Utils.is_valid_url(query):
+            instance.logger.info("Query is an URL, checking if the hostname is banned...")
+            query_as_url = urlparse(query)
+            query_as_host = f"{query_as_url.hostname}{f':{query_as_url.port}' if query_as_url.port else ''}"
+            if Utils.is_host_banned(query_as_host, 
+                                    instance.config.BANNED_STREAM_HOSTNAMES, 
+                                    instance.config.BANNED_STREAM_HOSTNAMES_IS_WHITELIST):
+                instance.logger.warning(f"Attempted to stream from banned hostname: {query_as_host}")
+                await message.reply(embed=Utils.get_error_embed("The specified hostname is not allowed to be streamed from"))
+                return
+            instance.logger.info("Hostname was not banned, continuing...")
+
+        instance.logger.info("Getting flat data first for query to know if it is a playlist...")
         flat_stream_data = await YoutubeDL.get_flat_query_raw_data(query)
         flat_stream_data_length = len(flat_stream_data["entries"]) if "entries" in flat_stream_data else 0
         stream_data = None
 
         # Check if the provided query is a playlist
         if flat_stream_data_length > 1:
-            instance.logger.info("Query is a playlist, adding entries to queue")
+            instance.logger.info("Query is a playlist, adding entries to queue...")
 
             flat_stream_data_entries : list[dict[str, Any]] = flat_stream_data["entries"]
             items_added = 0

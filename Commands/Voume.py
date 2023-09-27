@@ -25,4 +25,4 @@ async def cmd_volume(instance : PYMusicBot,
 
     instance.voice_volume = volume_level / 100
     if audio_source: audio_source.volume = instance.voice_volume
-    await message.add_reaction("✅")
+    await Utils.add_reaction(message, "✅")

@@ -12,17 +12,19 @@ from time import time
 COMMAND_PREFIX = "-"
 
 class PYMusicBot(discord.Client):
-    def __init__(self, config : Config) -> None:
+    def __init__(self) -> None:
         intents = discord.Intents.default()
         intents.message_content = True
         super().__init__(intents=intents)
 
-        self.config : Config = config
+        self.config = Config()
+        self.voice_guild : (discord.Guild | None) = None
         self.voice_channel : (discord.channel.VoiceChannel | None) = None
         self._voice_client : (discord.voice_client.VoiceClient | None) = None
         self.voice_volume = self.config.DEFAULT_VOICE_VOLUME
         self.music_queue : list[dict[str, Any]] = []
         self.is_resolving = False
+        self.is_joining = False
         self.suppress_queue_stream_on_stop = False
 
     async def on_ready(self):
@@ -30,35 +32,34 @@ class PYMusicBot(discord.Client):
         self.logger.info(f"Logged in as {self.user}")
         self.logger.info(f"You can invite the bot using the following URL: " + 
                          f"https://discord.com/oauth2/authorize?client_id={self.user.id}&permissions=274914954304&scope=bot")
-        
+        await self.load_config()
+        await self.change_presence(activity=discord.activity.Game("music to you"))
+
+    async def load_config(self):
+        self.config.load()
+
         try:
             guild = await self.fetch_guild(self.config.OPERATING_GUILD)
         except:
             guild = None
-        if not guild:
-            self.logger.fatal("Invalid operating guild specified in config!")
-            await self.close()
-            return
-        
-        try:
-            channel = await guild.fetch_channel(self.config.VOICE_CHANNEL)
-        except:
-            guild = None
-        if not channel or not isinstance(channel, discord.channel.VoiceChannel):
-            self.logger.fatal("Invalid voice channel specified in config!")
-            await self.close()
-            return
-        
-        self.voice_channel = channel
-        self.logger.info(f"Guild: {guild.name} ({guild.id})")
-        self.logger.info(f"Voice channel: {self.voice_channel.name} ({self.voice_channel.id})")
 
-        await self.change_presence(activity=discord.activity.Game("music to you"))
+        if not guild:
+            self.logger.fatal("Invalid operating guild specified in config! Shutting down...")
+            await self.close()
+            return
+
+        self.voice_guild = guild
+        self.logger.info(f"The bot will operate in the guild \"{guild.name}\" ({guild.id})")
 
     async def on_message(self, message : discord.message.Message):
         if message.author == self.user or message.author.bot or not isinstance(message.channel, discord.channel.TextChannel):
             return
 
+        if Utils.is_something_banned(message.channel.id, 
+                                     self.config.BANNED_TEXT_CHANNELS, 
+                                     self.config.BANNED_TEXT_CHANNELS_IS_WHITELIST):
+            return
+        
         message_content = message.content
         if message_content.startswith(COMMAND_PREFIX):
             content_parsed = message_content.split(" ")
@@ -79,44 +80,36 @@ class PYMusicBot(discord.Client):
             self.logger.info(f"Executing handler for commnad \"{cmd}\"...")
 
             if self.is_banned(message.author) and not self.is_administrator(message.author):
-                self.logger.warn(f"Banned user ({message.author}) attempted to execute a command!")
-                await message.reply(embed=
-                                        Utils.get_embed(":hammer: Banned", "You are not allowed to use commands!", (255, 0, 0)))
+                self.logger.warning(f"Banned user ({message.author}) attempted to execute a command!")
+                if not self.config.NO_REPLY_TO_BANNED:
+                    await message.reply(embed=
+                                            Utils.get_embed(":hammer: Banned", "You are not allowed to use commands!", (255, 0, 0)))
                 return
 
-            if cmd_handler.needs_join_voice_channel:
-                if not self.get_voice_client():
-                    await message.reply(embed=
-                                        Utils.get_error_embed("I haven't joined the voice channel!"))
-                    return
+            if cmd_handler.needs_join_voice_channel and not self.get_voice_client():
+                await message.reply(embed=
+                                    Utils.get_error_embed("I haven't joined the voice channel!"))
+                return
 
             if cmd_handler.needs_same_guild:
-                if guild.id != self.voice_channel.guild.id:
+                if guild.id != self.voice_guild.id:
                     await message.reply(embed=
-                                        Utils.get_error_embed("The current guild doesn't match the guild of the voice channel"))
+                                        Utils.get_error_embed("The current guild is not valid!"))
                     return
 
-            if cmd_handler.needs_listening_executor:
+            if cmd_handler.needs_listening_executor and self.get_voice_client():
                 if not message.author.voice or message.author.voice.channel.id != self.voice_channel.id:
                     await message.reply(embed=
                                         Utils.get_error_embed("You must be listening in my voice channel to execute that command!"))
                     return
 
-            if cmd_handler.needs_admin:
+            if cmd_handler.needs_admin or self.config.COMMANDS_ADMIN_ONLY:
                 if not self.is_administrator(message.author):
                     await message.reply(embed=
                                         Utils.get_error_embed(
                                             "You must be an administrator to execute that command! (defined in the config)"))
                     return
-
-            #if not self.is_administrator(message.author):
-            #    await message.reply(embed=
-            #                            Utils.get_embed(
-            #                                ":construction: Bot under construction",
-            #                                "Bot under construction, commands only available to administrators",
-            #                                (255, 72, 0)))
-            #    return
-
+                
             try:
                 await cmd_handler.func(self, message, channel, guild, args)
             except Exception as ex:
@@ -125,13 +118,13 @@ class PYMusicBot(discord.Client):
                 await message.reply(embed=
                                         Utils.get_error_embed(f"The command has ran into an un-handled exception: {ex}"))
         else:
-            self.logger.warn(f"\"{cmd}\" is not a valid command!")
+            self.logger.warning(f"\"{cmd}\" is not a valid command!")
             await message.reply(embed=
                                         Utils.get_error_embed("Invalid command! Check \"help\" for a list of available commands"))
 
     async def stream_data_voice_channel(self, data, callback):
         if not self.get_voice_client():
-            self.logger.warn("Attempted to stream, but not in the voice channel")
+            self.logger.warning("Attempted to stream, but not in the voice channel")
             await callback("Not in a voice channel")
             return
         
@@ -152,13 +145,29 @@ class PYMusicBot(discord.Client):
 
     async def leave_voice_channel(self):
         if self._voice_client:
-            self.logger.info(f"Leaving voice channel...")
+            self.logger.info("Leaving voice channel...")
             await self._voice_client.disconnect()
+            self._voice_client.cleanup()
         self._voice_client = None
+        self.voice_channel = None
+        self.clear_music_queue()
 
     def get_voice_client(self) -> (discord.voice_client.VoiceClient | None):
         if self._voice_client and not self._voice_client.is_connected():
             self._voice_client = None
+
+        if self.voice_channel:
+            voice_client = discord.utils.get(self.voice_clients, guild=self.voice_channel.guild)
+            if not self._voice_client and voice_client:
+                self.logger.warning("Lost track of voice client! Cleaning up...")
+                asyncio.ensure_future(voice_client.disconnect(), loop=self.loop)
+                voice_client.cleanup()
+                voice_client = None
+
+        if not self._voice_client:
+            self.voice_channel = None
+            self.clear_music_queue()
+
         return self._voice_client
     
     def is_banned(self, user : discord.Member):
@@ -223,3 +232,7 @@ class PYMusicBot(discord.Client):
         else:
             self.logger.info("Streaming next item from the queue has been suppressed")
             self.suppress_queue_stream_on_stop = False
+
+    def clear_music_queue(self):
+        self.logger.info("Clearing the music queue...")
+        self.music_queue.clear()

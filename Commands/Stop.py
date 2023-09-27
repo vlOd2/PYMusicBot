@@ -1,4 +1,5 @@
 import discord
+import Utils
 from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 
@@ -8,7 +9,7 @@ async def cmd_stop(instance : PYMusicBot,
              channel : discord.channel.TextChannel, 
              guild : discord.guild.Guild,
              args : list[str]):
-    instance.music_queue.clear()
+    instance.clear_music_queue()
     instance.get_voice_client().stop()
     instance.logger.info("Stopped streaming and cleared the queue")
-    await message.add_reaction("✅")
+    await Utils.add_reaction(message, "✅")

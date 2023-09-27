@@ -1,4 +1,5 @@
 import discord
+import Utils
 from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 
@@ -9,4 +10,4 @@ async def cmd_skip(instance : PYMusicBot,
              guild : discord.guild.Guild,
              args : list[str]):
     instance.get_voice_client().stop()
-    await message.add_reaction("✅")
+    await Utils.add_reaction(message, "✅")
