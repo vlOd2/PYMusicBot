@@ -1,21 +1,34 @@
 import subprocess
 import discord
 import fnmatch
+import logging
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 def get_video_duration(input):
-    args = f"ffprobe -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input}"
-    process = subprocess.Popen(args, shell=True, text=True, stdout=subprocess.PIPE)
-    ffprobe_result = process.stdout.readline().strip()
-    process.kill()
+    logger = logging.getLogger("PYMusicBot")
+    args = [ 
+        "ffprobe", 
+        "-v", "error", 
+        "-show_entries", "format=duration", 
+        "-of", "default=noprint_wrappers=1:nokey=1", 
+        input 
+    ]
 
-    if not ffprobe_result or len(ffprobe_result) < 1:
-        return -1
-    
     try:
-        return int(float(ffprobe_result) * 1000)
-    except:
+        logger.info(f"Starting FFprobe with the following process start-up args: {args}")
+
+        process_result = subprocess.run(args, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        query_result = process_result.stdout.strip()
+        if not query_result or len(query_result) < 1:
+            logger.error(f"FFprobe has encountered an error: {process_result.stderr}")
+            return -1
+
+        logger.info(f"Raw result from FFprobe: {query_result}")
+        return int(float(query_result) * 1000)
+    except Exception as ex:
+        logger.error(f"Unable to run FFprobe:")
+        logger.exception(ex)
         return -1
 
 def get_secs_formatted(seconds):

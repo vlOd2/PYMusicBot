@@ -10,6 +10,7 @@ from typing import Any
 from time import time
 
 COMMAND_PREFIX = "-"
+VERSION = "1.1"
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:

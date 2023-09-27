@@ -23,7 +23,9 @@ async def cmd_stream(instance : PYMusicBot,
 
     query = " ".join(args)
     instance.logger.info(f"Getting data for query \"{query}\"...")
-    stream_msg = await message.reply(embed=Utils.get_embed(f"Resolving query `{query}`...", None, (0, 0, 255)))
+    stream_msg = await message.reply(embed=Utils.get_embed(":hourglass: Resolving Query", 
+                                                           f"Resolving the query `{query}`, please wait, this might take a while...", 
+                                                           (0, 0, 255)))
 
     async def stream_callback(error_msg):
         if error_msg:

@@ -22,7 +22,9 @@ async def cmd_search(instance : PYMusicBot,
 
     query = " ".join(args)
     instance.logger.info(f"Getting raw data for query \"{query}\"...")
-    search_msg = await message.reply(embed=Utils.get_embed(f"Resolving query `{query}`...", None, (0, 0, 255)))
+    search_msg = await message.reply(embed=Utils.get_embed(":hourglass: Resolving Query", 
+                                                           f"Resolving the query `{query}`, please wait, this might take a while...", 
+                                                           (0, 0, 255)))
 
     try:
         instance.is_resolving = True
