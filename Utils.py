@@ -18,13 +18,18 @@ def get_video_duration(input):
     try:
         logger.info(f"Starting FFprobe with the following process start-up args: {args}")
 
-        process_result = subprocess.run(args, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process_result = subprocess.run(args, text=True, capture_output=True)
         query_result = process_result.stdout.strip()
+        logger.info(f"Raw result from FFprobe: {query_result}")
+
         if not query_result or len(query_result) < 1:
-            logger.error(f"FFprobe has encountered an error: {process_result.stderr}")
+            logger.error(f"FFprobe has encountered an error: {process_result.stderr.strip()}")
             return -1
 
-        logger.info(f"Raw result from FFprobe: {query_result}")
+        if query_result == "N/A":
+            logger.info("FFprobe reported the query was not applicable")
+            return -1
+
         return int(float(query_result) * 1000)
     except Exception as ex:
         logger.error(f"Unable to run FFprobe:")

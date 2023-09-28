@@ -18,14 +18,18 @@ class Config():
         self.BANNED_TEXT_CHANNELS_IS_WHITELIST = False
         self.BANNED_VOICE_CHANNELS = []
         self.BANNED_VOICE_CHANNELS_IS_WHITELIST = False
-        self.BANNED_STREAM_HOSTNAMES = [
+        self.WHITELIST_STREAM_HOSTNAMES = [
             "cdn.discordapp.com",
             "youtube.com",
             "*.youtube.com",
             "tiktok.com",
-            "*.tiktok.com"
+            "*.tiktok.com",
+            "youtu.be"
+            "twitch.tv"
+            "*.twitch.tv"
         ]
-        self.BANNED_STREAM_HOSTNAMES_IS_WHITELIST = True
+        self.WHITELIST_IS_BLACKLIST = False
+        self.VC_CHECK_TICK_INTERVAL = 5
 
     def export_json(self):
         return json.dumps(self, default=lambda obj: obj.__dict__, indent=4)

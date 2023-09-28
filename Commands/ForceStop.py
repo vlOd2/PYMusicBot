@@ -4,6 +4,7 @@ from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 
 @CommandDeclaration("forcestop", CommandHandler("Clears the queue and kills all voice clients", 
+                                                needs_listening_executor=False,
                                                 needs_join_voice_channel=False, 
                                                 needs_admin=True))
 async def cmd_forcestop(instance : PYMusicBot, 

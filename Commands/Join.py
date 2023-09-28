@@ -36,9 +36,14 @@ async def cmd_join(instance : PYMusicBot,
         instance.is_joining = True
         instance._voice_client = await instance.voice_channel.connect()
     except TimeoutError:
+        instance.logger.error(f"Timed out whilst trying to join the voice channel {author_voice_channel.id}!")
         await message.reply(embed=Utils.get_error_embed("Timed out whilst trying to join! Try again?"))
         return
     finally:
         instance.is_joining = False
+
+    instance.logger.info(f"Starting loop on_vc_check_tick (interval: {instance.config.VC_CHECK_TICK_INTERVAL})...")
+    instance.on_vc_check_tick.change_interval(seconds=instance.config.VC_CHECK_TICK_INTERVAL)
+    instance.on_vc_check_tick.start()
 
     await Utils.add_reaction(message, "✅")

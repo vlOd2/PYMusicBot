@@ -46,10 +46,10 @@ async def cmd_stream(instance : PYMusicBot,
             query_as_url = urlparse(query)
             query_as_host = f"{query_as_url.hostname}{f':{query_as_url.port}' if query_as_url.port else ''}"
             if Utils.is_host_banned(query_as_host, 
-                                    instance.config.BANNED_STREAM_HOSTNAMES, 
-                                    instance.config.BANNED_STREAM_HOSTNAMES_IS_WHITELIST):
+                                    instance.config.WHITELIST_STREAM_HOSTNAMES, 
+                                    not instance.config.WHITELIST_IS_BLACKLIST):
                 instance.logger.warning(f"Attempted to stream from banned hostname: {query_as_host}")
-                await message.reply(embed=Utils.get_error_embed("The specified hostname is not allowed to be streamed from"))
+                await stream_msg.edit(embed=Utils.get_error_embed("The specified hostname is not allowed to be streamed from"))
                 return
             instance.logger.info("Hostname was not banned, continuing...")
 

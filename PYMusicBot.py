@@ -1,4 +1,5 @@
 import discord
+from discord.ext import tasks
 import logging
 import asyncio
 import YoutubeDL
@@ -10,7 +11,7 @@ from typing import Any
 from time import time
 
 COMMAND_PREFIX = "-"
-VERSION = "1.1"
+VERSION = "1.2"
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:
@@ -19,13 +20,16 @@ class PYMusicBot(discord.Client):
         super().__init__(intents=intents)
 
         self.config = Config()
-        self.voice_guild : (discord.Guild | None) = None
+        self.operating_guild : (discord.Guild | None) = None
         self.voice_channel : (discord.channel.VoiceChannel | None) = None
         self._voice_client : (discord.voice_client.VoiceClient | None) = None
-        self.voice_volume = self.config.DEFAULT_VOICE_VOLUME
-        self.music_queue : list[dict[str, Any]] = []
+        self._is_ready = False
         self.is_resolving = False
         self.is_joining = False
+        self.voice_volume = self.config.DEFAULT_VOICE_VOLUME
+        self.music_queue : list[dict[str, Any]] = []
+        self.last_song : (dict[str, Any] | None) = None
+        self.repeat_last_song = False
         self.suppress_queue_stream_on_stop = False
 
     async def on_ready(self):
@@ -35,6 +39,7 @@ class PYMusicBot(discord.Client):
                          f"https://discord.com/oauth2/authorize?client_id={self.user.id}&permissions=274914954304&scope=bot")
         await self.load_config()
         await self.change_presence(activity=discord.activity.Game("music to you"))
+        self._is_ready = True
 
     async def load_config(self):
         self.config.load()
@@ -49,16 +54,17 @@ class PYMusicBot(discord.Client):
             await self.close()
             return
 
-        self.voice_guild = guild
+        self.operating_guild = guild
         self.logger.info(f"The bot will operate in the guild \"{guild.name}\" ({guild.id})")
 
     async def on_message(self, message : discord.message.Message):
-        if message.author == self.user or message.author.bot or not isinstance(message.channel, discord.channel.TextChannel):
-            return
-
-        if Utils.is_something_banned(message.channel.id, 
+        if (not self._is_ready or 
+            message.author == self.user or 
+            message.author.bot or 
+            not isinstance(message.channel, discord.channel.TextChannel) or
+            Utils.is_something_banned(message.channel.id, 
                                      self.config.BANNED_TEXT_CHANNELS, 
-                                     self.config.BANNED_TEXT_CHANNELS_IS_WHITELIST):
+                                     self.config.BANNED_TEXT_CHANNELS_IS_WHITELIST)):
             return
         
         message_content = message.content
@@ -93,7 +99,7 @@ class PYMusicBot(discord.Client):
                 return
 
             if cmd_handler.needs_same_guild:
-                if guild.id != self.voice_guild.id:
+                if guild.id != self.operating_guild.id:
                     await message.reply(embed=
                                         Utils.get_error_embed("The current guild is not valid!"))
                     return
@@ -142,6 +148,7 @@ class PYMusicBot(discord.Client):
 
         self.logger.info(f"Now streaming audio from \"{audio_source.data['url']}\"" + 
                          f" (start time: {audio_source.start_time}, duration: {audio_source.data['duration']})")
+        self.last_song = data
         await callback(None)
 
     async def leave_voice_channel(self):
@@ -149,11 +156,13 @@ class PYMusicBot(discord.Client):
             self.logger.info("Leaving voice channel...")
             await self._voice_client.disconnect()
             self._voice_client.cleanup()
-        self._voice_client = None
-        self.voice_channel = None
-        self.clear_music_queue()
+        self.dispose_voice()
 
     def get_voice_client(self) -> (discord.voice_client.VoiceClient | None):
+        if not self.voice_channel and self._voice_client:
+            asyncio.ensure_future(voice_client.disconnect(), loop=self.loop)
+            self._voice_client = None
+
         if self._voice_client and not self._voice_client.is_connected():
             self._voice_client = None
 
@@ -166,11 +175,19 @@ class PYMusicBot(discord.Client):
                 voice_client = None
 
         if not self._voice_client:
-            self.voice_channel = None
-            self.clear_music_queue()
+            self.dispose_voice()
 
         return self._voice_client
     
+    def dispose_voice(self):
+        self.logger.info("Disposing voice...")
+        self.logger.info("Stopping loop on_vc_check_tick...")
+        self.on_vc_check_tick.stop()
+        self._voice_client = None
+        self.voice_channel = None
+        self.last_song = None
+        self.clear_music_queue()
+
     def is_banned(self, user : discord.Member):
         if user.id in self.config.BANNED_USERS:
             return True
@@ -211,7 +228,8 @@ class PYMusicBot(discord.Client):
                     
                 await self.stream_data_voice_channel(audio_data, stream_callback)
             except Exception as ex:
-                self.logger.error(f"Unable to play next item from queue: {ex}")
+                self.logger.error(f"Unable to play next item from queue:")
+                self.logger.exception(ex)
                 await self.stream_next_queue_item()
             finally:
                 self.is_resolving = False
@@ -223,17 +241,36 @@ class PYMusicBot(discord.Client):
 
         if error: 
             self.logger.error(f"Streaming error: {error}")
+            
+        if self.repeat_last_song and self.last_song and not self.suppress_queue_stream_on_stop:
+            async def stream_callback(error_msg): 
+                if error_msg:
+                    self.logger.error(f"Repeat last song stream callback resulted in error: {error_msg}")
 
-        if not self.suppress_queue_stream_on_stop:
-            if self.get_voice_client(): 
-                self._voice_client.stop()
-
-            if self.get_voice_client(): 
-                await self.stream_next_queue_item()
+            self.logger.info("Repeat is on, replaying the last song...")
+            await self.stream_data_voice_channel(self.last_song, stream_callback)
         else:
-            self.logger.info("Streaming next item from the queue has been suppressed")
-            self.suppress_queue_stream_on_stop = False
+            if self.repeat_last_song and self.suppress_queue_stream_on_stop:
+                self.logger.info("Repeating the last song has been suppressed")
+                self.suppress_queue_stream_on_stop = False
+
+            if not self.suppress_queue_stream_on_stop:
+                if self.get_voice_client(): 
+                    self._voice_client.stop()
+                    await self.stream_next_queue_item()
+            else:
+                self.logger.info("Streaming next item from the queue has been suppressed")
+                self.suppress_queue_stream_on_stop = False
+                return
 
     def clear_music_queue(self):
         self.logger.info("Clearing the music queue...")
         self.music_queue.clear()
+
+    @tasks.loop(seconds=5)
+    async def on_vc_check_tick(self):
+        if not self.voice_channel: return
+
+        if len(self.voice_channel.members) < 2:
+            self.logger.warning("The VC check tick failed (we are alone in VC), leaving the voice channel...")
+            await self.leave_voice_channel()

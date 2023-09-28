@@ -9,5 +9,7 @@ async def cmd_skip(instance : PYMusicBot,
              channel : discord.channel.TextChannel, 
              guild : discord.guild.Guild,
              args : list[str]):
+    if instance.repeat_last_song:
+        instance.suppress_queue_stream_on_stop = True
     instance.get_voice_client().stop()
     await Utils.add_reaction(message, "✅")

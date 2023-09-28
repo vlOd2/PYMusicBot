@@ -24,7 +24,7 @@ async def cmd_info(instance : PYMusicBot,
         progress_bar_progress = audio_time_elapsed / audio_duration if audio_duration > 0 else 0
 
         info_embed = discord.Embed()
-        info_embed.title = audio_data["title"]
+        info_embed.title = f"`{audio_data['title']}`"
         info_embed.url = audio_data["webpage_url"]
         info_embed.colour = discord.Colour.from_rgb(0, 255, 0)
         info_embed.set_thumbnail(url=(audio_data["thumbnail"] if "thumbnail" in audio_data else None))
