@@ -24,8 +24,8 @@ class Config():
             "*.youtube.com",
             "tiktok.com",
             "*.tiktok.com",
-            "youtu.be"
-            "twitch.tv"
+            "youtu.be",
+            "twitch.tv",
             "*.twitch.tv"
         ]
         self.WHITELIST_IS_BLACKLIST = False
