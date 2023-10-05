@@ -72,11 +72,12 @@ def get_embed(title, description, color):
 def get_error_embed(message):
     return get_embed(":x: Error", message, (255, 0, 0))
 
-# Convenience function for adding a reaction
-async def add_reaction(message, reaction):
+async def add_reaction(message : discord.message.Message, reaction):
     try:
         await message.add_reaction(reaction)
     except:
+        logging.getLogger("PYMusicBot").warning(f"Failed to react to a message sent by {message.author.id}!"
+                                                f" Maybe we got blocked by them?")
         pass
 
 def is_valid_url(url):

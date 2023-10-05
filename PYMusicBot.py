@@ -11,7 +11,7 @@ from typing import Any
 from time import time
 
 COMMAND_PREFIX = "-"
-VERSION = "1.2"
+VERSION = "1.2.1"
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:
@@ -19,13 +19,19 @@ class PYMusicBot(discord.Client):
         intents.message_content = True
         super().__init__(intents=intents)
 
+        # Config
+        self._is_ready = False
         self.config = Config()
         self.operating_guild : (discord.Guild | None) = None
+        self.guild_member : (discord.Member | None) = None
+
+        # Voice
+        self.is_joining = False
         self.voice_channel : (discord.channel.VoiceChannel | None) = None
         self._voice_client : (discord.voice_client.VoiceClient | None) = None
-        self._is_ready = False
+
+        # Streamer
         self.is_resolving = False
-        self.is_joining = False
         self.voice_volume = self.config.DEFAULT_VOICE_VOLUME
         self.music_queue : list[dict[str, Any]] = []
         self.last_song : (dict[str, Any] | None) = None
@@ -55,6 +61,7 @@ class PYMusicBot(discord.Client):
             return
 
         self.operating_guild = guild
+        self.guild_member = await guild.fetch_member(self.user.id)
         self.logger.info(f"The bot will operate in the guild \"{guild.name}\" ({guild.id})")
 
     async def on_message(self, message : discord.message.Message):
@@ -62,11 +69,12 @@ class PYMusicBot(discord.Client):
             message.author == self.user or 
             message.author.bot or 
             not isinstance(message.channel, discord.channel.TextChannel) or
+            message.guild.id != self.operating_guild.id or
             Utils.is_something_banned(message.channel.id, 
                                      self.config.BANNED_TEXT_CHANNELS, 
                                      self.config.BANNED_TEXT_CHANNELS_IS_WHITELIST)):
             return
-        
+
         message_content = message.content
         if message_content.startswith(COMMAND_PREFIX):
             content_parsed = message_content.split(" ")
@@ -97,13 +105,7 @@ class PYMusicBot(discord.Client):
                 await message.reply(embed=
                                     Utils.get_error_embed("I haven't joined the voice channel!"))
                 return
-
-            if cmd_handler.needs_same_guild:
-                if guild.id != self.operating_guild.id:
-                    await message.reply(embed=
-                                        Utils.get_error_embed("The current guild is not valid!"))
-                    return
-
+            
             if cmd_handler.needs_listening_executor and self.get_voice_client():
                 if not message.author.voice or message.author.voice.channel.id != self.voice_channel.id:
                     await message.reply(embed=

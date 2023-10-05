@@ -15,11 +15,16 @@ async def cmd_join(instance : PYMusicBot,
         await message.reply(embed=Utils.get_error_embed("You are currently not in a voice channel!"))
         return
     author_voice_channel = message.author.voice.channel
+    author_voice_channel_permissions = author_voice_channel.permissions_for(instance.guild_member)
 
     if Utils.is_something_banned(author_voice_channel.id, 
                                  instance.config.BANNED_VOICE_CHANNELS, 
                                  instance.config.BANNED_VOICE_CHANNELS_IS_WHITELIST):
         await message.reply(embed=Utils.get_error_embed("Sorry, but your voice channel has been blocked from being used!"))
+        return
+
+    if not author_voice_channel_permissions.connect or not author_voice_channel_permissions.speak:
+        await message.reply(embed=Utils.get_error_embed("I don't have enough permissions to join that channel!"))
         return
 
     if instance.is_joining:
@@ -34,7 +39,7 @@ async def cmd_join(instance : PYMusicBot,
 
     try:
         instance.is_joining = True
-        instance._voice_client = await instance.voice_channel.connect()
+        instance._voice_client = await instance.voice_channel.connect(timeout=10, reconnect=False, self_deaf=True)
     except TimeoutError:
         instance.logger.error(f"Timed out whilst trying to join the voice channel {author_voice_channel.id}!")
         await message.reply(embed=Utils.get_error_embed("Timed out whilst trying to join! Try again?"))
@@ -44,6 +49,7 @@ async def cmd_join(instance : PYMusicBot,
 
     instance.logger.info(f"Starting loop on_vc_check_tick (interval: {instance.config.VC_CHECK_TICK_INTERVAL})...")
     instance.on_vc_check_tick.change_interval(seconds=instance.config.VC_CHECK_TICK_INTERVAL)
-    instance.on_vc_check_tick.start()
+    if not instance.on_vc_check_tick.is_running():
+        instance.on_vc_check_tick.start()
 
     await Utils.add_reaction(message, "✅")

@@ -5,8 +5,7 @@ from PYMusicBot import PYMusicBot
 
 @CommandDeclaration("help", CommandHandler("Provides a list of available commands",
                                            needs_join_voice_channel=False, 
-                                           needs_listening_executor=False, 
-                                           needs_same_guild=False))
+                                           needs_listening_executor=False))
 async def cmd_help(instance : PYMusicBot, 
              message : discord.message.Message, 
              channel : discord.channel.TextChannel, 

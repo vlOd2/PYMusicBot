@@ -12,8 +12,7 @@ ABOUT_DESCRIPTION = (
 
 @CommandDeclaration("about", CommandHandler("Gets information about the bot", 
                                             needs_join_voice_channel=False, 
-                                            needs_listening_executor=False, 
-                                            needs_same_guild=False))
+                                            needs_listening_executor=False))
 async def cmd_about(instance : PYMusicBot, 
              message : discord.message.Message, 
              channel : discord.channel.TextChannel, 
