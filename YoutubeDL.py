@@ -50,3 +50,36 @@ async def get_query_raw_data(query):
 
 async def get_flat_query_raw_data(query):
     return await asyncio.get_event_loop().run_in_executor(None, lambda: flat_youtubedl.extract_info(query, download=False))
+
+# TODO: Add Spotify support
+async def get_spotify_data(query):
+    # Single song
+    __todo_song = {
+        "title": None,
+        "url": None,
+        "duration": 0,
+        "webpage_url": 0,
+        "thumbnail": None
+    }
+    
+    # Playlist
+    __todo_playlist = {
+        "entries": [
+            {
+                "title": None,
+                "url": None,
+                "duration": 0,
+                "webpage_url": 0,
+                "thumbnail": None
+            },
+            {
+                "title": None,
+                "url": None,
+                "duration": 0,
+                "webpage_url": 0,
+                "thumbnail": None
+            }
+        ]
+    }
+
+    return None

@@ -1,3 +1,5 @@
+<img src="Logo.png" alt="Logo" width=256 height=256>
+
 # 🎶 PYMusicBot
 A music bot designed to be robust (by using FFmpeg) and to be hosted on one Discord server only
 
