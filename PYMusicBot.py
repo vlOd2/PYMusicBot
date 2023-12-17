@@ -11,7 +11,7 @@ from typing import Any
 from time import time
 
 COMMAND_PREFIX = "-"
-VERSION = "1.2.1"
+VERSION = "1.2.2"
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:

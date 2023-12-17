@@ -1,5 +1,6 @@
 import discord
 import Utils
+import logging
 from Commands.CommandHandler import CommandDeclaration, CommandHandler
 from PYMusicBot import PYMusicBot
 
@@ -10,6 +11,7 @@ async def cmd_repeat(instance : PYMusicBot,
              guild : discord.guild.Guild,
              args : list[str]):
     instance.repeat_last_song = not instance.repeat_last_song
+    logging.getLogger().info(f"{message.author} toggled repeat to {instance.repeat_last_song}")
     await message.reply(embed=Utils.get_embed(":repeat: Repeating Status", 
                                                 f"The repeating status was set to: {instance.repeat_last_song}", 
                                                 (0, 255, 0)))
