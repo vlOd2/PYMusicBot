@@ -11,9 +11,6 @@ This code base is based on the [self-bot version](https://github.com/vlOd2/SelfM
 # 🔧 How to setup
 Check the wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
 
-# 🧪 Testing server
-We have a [testing server](https://discord.gg/2scr9DNuPZ) for the bot
-
 # 👨‍💻 Contributing
 You may proceed with the following steps if you wish to contribute to this project
 
