@@ -8,6 +8,5 @@ async def cmd_test(e : discord.Interaction):
     await e.response.send_message(embed=EmbedUtils.state(
         "I'm alive!",
         "The bot is working perfectly fine!",
-        e.client, 
-        e.user # type: ignore
+        e.user
     ))

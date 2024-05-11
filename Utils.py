@@ -1,9 +1,16 @@
+import discord
 import traceback
 import logging
 import subprocess
 from datetime import datetime, timezone
 
-def exstr(ex : BaseException):
+def required_votes(channel : discord.VoiceChannel) -> int:
+    member_count = len(channel.members) - 1
+    required = int(member_count / 2)
+    if required < 1: required = 1
+    return required
+
+def exstr(ex : BaseException) -> str:
     traceback.print_exception(ex)
     formated : list[str] = traceback.format_exception(ex)
     output = ""
@@ -13,14 +20,26 @@ def exstr(ex : BaseException):
     
     return output
 
-def logger_file():
+def progress_bar(progress, block_size) -> str:
+    bar_str = ""
+    currently_at_pos = int(progress * block_size)
+
+    for i in range(block_size):
+        if i == currently_at_pos:
+            bar_str += ":radio_button:"
+        else:
+            bar_str += "▬"
+    
+    return bar_str
+
+def logger_file() -> str:
     return datetime.now().strftime("%H-%M-%S %d.%m.%Y.log")
 
-def formated_time(seconds):
+def formated_time(seconds) -> str:
     timestamp = datetime.fromtimestamp(seconds, tz=timezone.utc)
     return timestamp.strftime('%H:%M:%S') if timestamp.hour > 0 else timestamp.strftime('%M:%S')
 
-def ffprobe_duration(input):
+def ffprobe_duration(input) -> int:
     logger = logging.getLogger()
     args = [ 
         "ffprobe", 

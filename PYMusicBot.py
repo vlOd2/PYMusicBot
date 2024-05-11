@@ -6,7 +6,9 @@ from Config import ConfigInstance as Config
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:
-        super().__init__(intents=discord.Intents.default())
+        intents = discord.Intents.default()
+        intents.members = True
+        super().__init__(intents=intents)
         self.tree : discord.app_commands.CommandTree = discord.app_commands.CommandTree(self)
         self.players : list[PlayerInstance] = []
 
