@@ -15,7 +15,8 @@ YOUTUBEDL_OPTIONS = {
     "extractor_args": {
         "youtube": {
             "player_client": [ "android_embedded" ],
-            "player_skip": [ "configs", "webpage", "js" ]
+            "player_skip": [ "configs", "webpage", "js" ],
+            "skip": [ "hls", "dash", "translated_subs" ]
         }
     },
     "noplaylist": True,

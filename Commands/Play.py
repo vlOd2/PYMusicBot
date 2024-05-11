@@ -9,9 +9,20 @@ from .NowPlaying import _get_embed
 
 @definecmd("play", 
            "Adds something to the queue")
-async def cmd_play(e : discord.Interaction, query : str):
+async def cmd_play(e : discord.Interaction, query : str = None, file : discord.Attachment = None):
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
+
+    if query == None and file == None:
+        await e.response.send_message(embed=EmbedUtils.error(
+            "Bad query",
+            "No valid query was specified!",
+            e.user
+        ), ephemeral=True)
+        return
+
+    if file != None:
+        query = file.url
 
     if player == None and e.user.voice == None:
         await e.response.send_message(embed=EmbedUtils.error(
@@ -19,7 +30,7 @@ async def cmd_play(e : discord.Interaction, query : str):
             "You are not currently in a voice channel",
             e.user
         ), ephemeral=True)
-        return False
+        return
 
     if not await channel_check(e, player):
         return
