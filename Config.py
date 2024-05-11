@@ -5,6 +5,31 @@ from typing import Any
 
 _CONFIG_FILE_NAME = "config.yml"
 
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
 class _CONFIG:
     def __init__(self) -> None:
         self.PresenceText : str = "music to you!"
