@@ -161,3 +161,4 @@ cython_debug/
 
 # Files used at runtime by PYMusicBot
 token.txt
+config.yml
