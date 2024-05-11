@@ -5,18 +5,33 @@ from Player.PlayerInstance import PlayerInstance
 from Commands.CommandDefinitions import channel_check
 from typing import Callable
 
-VOTE_TIMEOUT = 15
+_VOTE_TIMEOUT = 15
 
 class VotingView(discord.ui.View):
     InstanceDict : dict[str, discord.ui.View] = {}
 
+    @staticmethod
+    def id_to_msg(action_id : str) -> str:
+        match action_id:
+            case "skip":
+                return "skip the current song"
+            case "stop":
+                return "stop the player"
+            case _:
+                return "(unknown action)"
+
     def __init__(self, action_id : str, required : int, invoker : discord.User, on_success : Callable):
-        super().__init__(timeout=VOTE_TIMEOUT)
+        '''
+        Valid action IDs:
+        - skip
+        - stop
+        '''
+        super().__init__(timeout=_VOTE_TIMEOUT)
         self._action_id : str = action_id
-        self._required : int = required
+        self._required : int = required + 1
         self._done : bool = False
         self._invoker : discord.User = invoker
-        self._votes : list[int] = []
+        self._votes : list[int] = [ invoker.id ]
         self._on_success : Callable = on_success
         self.msg : discord.Message
 
@@ -33,16 +48,6 @@ class VotingView(discord.ui.View):
                 VotingView.InstanceDict[action_id] = self
         else:
             VotingView.InstanceDict[action_id] = self
-
-    @staticmethod
-    def id_to_msg(action_id : str) -> str:
-        match action_id:
-            case "skip":
-                return "skip the current song"
-            case "stop":
-                return "stop the player"
-            case _:
-                return "(unknown action)"
 
     async def on_timeout(self):
         self._done = True
@@ -62,7 +67,7 @@ class VotingView(discord.ui.View):
             "Vote",
             f"{self._invoker.name} would like to {VotingView.id_to_msg(self._action_id)}\n" +
             f"**{len(self._votes)}** votes out of the needed **{self._required}**\n" +
-            f"This vote will time out in {VOTE_TIMEOUT} seconds if nobody votes",
+            f"This vote will time out in {_VOTE_TIMEOUT} seconds if nobody votes",
             self._invoker
         ), view=self)
 
@@ -75,7 +80,7 @@ class VotingView(discord.ui.View):
         if not await channel_check(e, player): return
 
         if e.user.id in self._votes:
-            e.response.send_message(EmbedUtils.error(
+            await e.response.send_message(embed=EmbedUtils.error(
                 "Already voted",
                 "You can't vote twice",
                 e.user

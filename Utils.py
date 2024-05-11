@@ -6,8 +6,7 @@ from datetime import datetime, timezone
 
 def required_votes(channel : discord.VoiceChannel) -> int:
     member_count = len(channel.members) - 1
-    required = int(member_count / 2)
-    if required < 1: required = 1
+    required = max(1, round(member_count * 0.5))
     return required
 
 def exstr(ex : BaseException) -> str:
