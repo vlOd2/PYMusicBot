@@ -39,7 +39,7 @@ class _CONFIG:
 
     def load(self):
         if not os.path.exists(_CONFIG_FILE_NAME):
-            self._get_logger().warn("Config doesn't exist, creating default...")
+            self._get_logger().warning("Config doesn't exist, creating default...")
             self.save()
             return
         self._get_logger().info("Loading config...")

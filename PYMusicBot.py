@@ -21,7 +21,7 @@ class PYMusicBot(discord.Client):
         await self.change_presence(activity=discord.Game(Config.PresenceText))
 
     async def destroy_players(self):
-        logging.getLogger().warn("Destroying all player instances!")
+        logging.getLogger().warning("Destroying all player instances!")
         for player in self.players:
             player.stop(True)
         self.players.clear()

@@ -8,11 +8,11 @@ from Utils import formated_time, progress_bar
 
 def _get_embed(source : MediaSource) -> discord.Embed:
     duration = formated_time(source.duration) if source.duration != 0 else ":red_circle: Live"
-    uploader = f"[{source.uploader}]({source.uploader_url})" if source.uploader != None else "N/A"
+    uploader = f"[`{source.uploader}`]({source.uploader_url})" if source.uploader != None else "N/A"
 
     embed = discord.Embed()
     embed.colour = EmbedUtils.Constants.EMBED_COLOR_STATE
-    embed.title = source.title
+    embed.title = f"`{source.title}`"
     embed.url = source.source_url
     embed.add_field(name="Uploader", value=uploader, inline=True)
     embed.add_field(name="Duration", value=duration, inline=True)
