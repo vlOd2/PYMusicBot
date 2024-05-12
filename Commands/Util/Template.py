@@ -3,7 +3,7 @@
 
 # import discord
 # import EmbedUtils
-# from .CommandUtils import definecmd, fetch_check, playing_check, channel_check
+# from .Util.CommandUtils import definecmd, fetch_check, playing_check, channel_check
 # from PYMusicBot import PYMusicBot
 # from Player.PlayerInstance import PlayerInstance
 

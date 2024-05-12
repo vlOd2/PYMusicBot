@@ -1,9 +1,8 @@
 import yaml
 import os
 import logging
+import Constants
 from typing import Any
-
-_CONFIG_FILE_NAME = "config.yml"
 
 # !!! WARNING !!!
 # DO NOT MODIFY THIS FILE FOR CONFIGURATION
@@ -38,13 +37,13 @@ class _CONFIG:
         return logging.getLogger("Configuration")
 
     def load(self):
-        if not os.path.exists(_CONFIG_FILE_NAME):
+        if not os.path.exists(Constants.CONFIG_FILE_NAME):
             self._get_logger().warning("Config doesn't exist, creating default...")
             self.save()
             return
         self._get_logger().info("Loading config...")
 
-        config_file = open(_CONFIG_FILE_NAME, "r")
+        config_file = open(Constants.CONFIG_FILE_NAME, "r")
         loaded : dict[str, Any] = yaml.safe_load(config_file)
         config_file.close()
 
@@ -53,7 +52,7 @@ class _CONFIG:
 
     def save(self):
         self._get_logger().info("Saving config...")
-        config_file = open(_CONFIG_FILE_NAME, "w")
+        config_file = open(Constants.CONFIG_FILE_NAME, "w")
         yaml.safe_dump(self.__dict__, config_file)
         config_file.flush()
         config_file.close()

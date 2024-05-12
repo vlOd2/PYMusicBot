@@ -5,9 +5,6 @@ from typing import Any
 from Utils import ffprobe_duration
 
 def match_func(info_dict, incomplete=False):
-    if "webpage_url" in info_dict and "/shorts/" in info_dict["webpage_url"]:
-        return "Youtube shorts have been blocked! No more brain dead content!"
-
     if "playlist" in info_dict and info_dict["playlist"] == "recommended":
         return "The playlist recommended is not allowed!"
 
@@ -68,10 +65,11 @@ async def _fetch(query, instance : yt_dlp.YoutubeDL) -> dict[str, Any]:
 async def warmup():
     global _warm_up_done
     logger = logging.getLogger("yt-dlp-warmup")
-    logger.info("Warming up yt-dlp...")
-    for h in logger.handlers: h.flush()
-    await _fetch("Rick Roll", _youtubedl)
-    logger.info("Finished search warm-up")
-    await _fetch("https://www.youtube.com/watch?v=dQw4w9WgXcQ", _youtubedl)
-    logger.info("Finished direct URL warm-up")
+    logger.warning("Skipping warm-up because I want to fucking test")
+    # logger.info("Warming up yt-dlp...")
+    # for h in logger.handlers: h.flush()
+    # await _fetch("Rick Roll", _youtubedl)
+    # logger.info("Finished search warm-up")
+    # await _fetch("https://www.youtube.com/watch?v=dQw4w9WgXcQ", _youtubedl)
+    # logger.info("Finished direct URL warm-up")
     _warm_up_done = True

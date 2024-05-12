@@ -1,5 +1,6 @@
 import discord
 import EmbedUtils
+import Constants
 from .Util.CommandUtils import definecmd, fetch_check, playing_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
@@ -11,7 +12,7 @@ def _get_embed(source : MediaSource) -> discord.Embed:
     uploader = f"[`{source.uploader}`]({source.uploader_url})" if source.uploader != None else "N/A"
 
     embed = discord.Embed()
-    embed.colour = EmbedUtils.Constants.EMBED_COLOR_STATE
+    embed.colour = Constants.EMBED_COLOR_STATE
     embed.title = f"`{source.title}`"
     embed.url = source.source_url
     embed.add_field(name="Uploader", value=uploader, inline=True)
@@ -37,7 +38,7 @@ async def cmd_nowplaying(e : discord.Interaction):
     embed : discord.Embed = _get_embed(source)
     if source.duration > 0 and elapsed >= 0:
         embed.add_field(name="Elapsed", value=formated_time(elapsed), inline=True)
-        embed.add_field(name="** **", value=progress_bar(progress, 20), inline=False)
+        embed.add_field(name="** **", value=progress_bar(progress, Constants.NOW_PLAYING_BAR_SIZE), inline=False)
     else:
         embed.add_field(name="Elapsed", value="N/A", inline=True)
 

@@ -1,11 +1,10 @@
 import discord
 import EmbedUtils
+import Constants
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import channel_check
 from typing import Callable
-
-_VOTE_TIMEOUT = 15
 
 class VotingView(discord.ui.View):
     InstanceDict : dict[str, discord.ui.View] = {}
@@ -26,7 +25,7 @@ class VotingView(discord.ui.View):
         - skip
         - stop
         '''
-        super().__init__(timeout=_VOTE_TIMEOUT)
+        super().__init__(timeout=Constants.VOTE_VIEW_TIMEOUT)
         self._action_id : str = action_id
         self._required : int = required + 1
         self._done : bool = False
@@ -67,7 +66,7 @@ class VotingView(discord.ui.View):
             "Vote",
             f"{self._invoker.name} would like to {VotingView.id_to_msg(self._action_id)}\n" +
             f"**{len(self._votes)}** votes out of the needed **{self._required}**\n" +
-            f"This vote will time out in {_VOTE_TIMEOUT} seconds if nobody votes",
+            f"This vote will time out in {Constants.VOTE_VIEW_TIMEOUT} seconds if nobody votes",
             self._invoker
         ), view=self)
 

@@ -2,11 +2,12 @@ import discord
 import traceback
 import logging
 import subprocess
+import Constants
 from datetime import datetime, timezone
 
 def required_votes(channel : discord.VoiceChannel) -> int:
     member_count = len(channel.members) - 1
-    required = max(1, round(member_count * 0.25))
+    required = max(1, round(member_count * Constants.VOTES_REQUIRED_RATIO))
     return required
 
 def exstr(ex : BaseException) -> str:
@@ -38,6 +39,8 @@ def formated_time(seconds) -> str:
     timestamp = datetime.fromtimestamp(seconds, tz=timezone.utc)
     return timestamp.strftime('%H:%M:%S') if timestamp.hour > 0 else timestamp.strftime('%M:%S')
 
+# To dexrn: don't dexrnerify (i.e don't touch this)
+# If it doesn't work, it's an issue with ffprobe itself
 def ffprobe_duration(input) -> int:
     logger = logging.getLogger()
     args = [ 
