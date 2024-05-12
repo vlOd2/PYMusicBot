@@ -1,8 +1,9 @@
 import discord
+import Constants
 
 class PageView(discord.ui.View):
-    def __init__(self, pages : list[str], timeout : float):
-        super().__init__(timeout=timeout)
+    def __init__(self, pages : list[str]):
+        super().__init__(timeout=Constants.PAGE_VIEW_TIMEOUT)
         self.pages : list[str] = pages
         self.current_page : int = 0
 
