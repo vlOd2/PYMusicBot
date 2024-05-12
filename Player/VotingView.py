@@ -2,7 +2,7 @@ import discord
 import EmbedUtils
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
-from Commands.CommandDefinitions import channel_check
+from Commands.CommandUtils import channel_check
 from typing import Callable
 
 _VOTE_TIMEOUT = 15

@@ -1,6 +1,6 @@
 import discord
 import EmbedUtils
-from .CommandDefinitions import definecmd, channel_check
+from .CommandUtils import definecmd, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource

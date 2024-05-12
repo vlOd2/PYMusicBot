@@ -1,6 +1,6 @@
 import discord
 import EmbedUtils
-from .CommandDefinitions import definecmd
+from .CommandUtils import definecmd
 
 @definecmd("test", 
            "A test command that allows you to verify the bot's status")

@@ -1,11 +1,12 @@
+import ModuleCheck
 import logging
 from CustomColorFormatter import CustomColorFormatter
 import sys
 import os
 import Utils
-import Config
 import discord
 import PYMusicBot
+import Config
 from Commands import *
 
 LOGGER_FORMAT = {

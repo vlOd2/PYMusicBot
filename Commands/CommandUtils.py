@@ -1,3 +1,4 @@
+# Utilities used by commands or similar
 import discord
 import EmbedUtils
 from discord.app_commands import commands
@@ -5,7 +6,8 @@ from Player.PlayerInstance import PlayerInstance
 
 DefinedCommands : list[commands.Command] = []
 
-def definecmd(name, description):
+# Custom decorator that makes it so easy to add all the commands
+def definecmd(name : str, description : str):
     def decorator(func):
         cmd = commands.Command(name=name, description=description, callback=func)
         DefinedCommands.append(cmd)
@@ -27,7 +29,7 @@ async def playing_check(e : discord.Interaction, player : PlayerInstance) -> boo
             "Not connected",
             "Not currently connected in a voice channel",
             e.user
-        ))
+        ), ephemeral=True)
         return False
     return True
 

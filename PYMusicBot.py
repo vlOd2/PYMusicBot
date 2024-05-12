@@ -1,7 +1,7 @@
 import discord
 import logging
 from Player.PlayerInstance import PlayerInstance
-from Commands.CommandDefinitions import DefinedCommands
+from Commands.CommandUtils import DefinedCommands
 from Config import ConfigInstance as Config
 
 class PYMusicBot(discord.Client):

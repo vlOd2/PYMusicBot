@@ -45,8 +45,7 @@ class PlayerInstance:
         raw_source = FFmpegAudioSource.get_instance(source.url, 1)
         source.start_time = int(time())
         self.current_source = (source, raw_source)
-        self._voice_client.play(raw_source, 
-                                after=lambda e: asyncio.run_coroutine_threadsafe(self._on_source_end(), self._client.loop))
+        self._voice_client.play(raw_source, after=self._on_source_end__wrapper)
 
     async def _play_queue_next(self):
         if len(self._queue) == 0:
@@ -54,6 +53,10 @@ class PlayerInstance:
             await self.stop()
             return
         self._play(self._queue.pop(0))
+
+    def _on_source_end__wrapper(self, ex : Exception):
+        # Extracted outside a funny lamda to make it more readable
+        asyncio.run_coroutine_threadsafe(self._on_source_end(), self._client.loop)
 
     async def _on_source_end(self):
         if self._terminating: return
