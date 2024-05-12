@@ -1,6 +1,6 @@
 import discord
 import EmbedUtils
-from .Util.CommandUtils import definecmd, channel_check
+from .Util.CommandUtils import definecmd, guild_check, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
@@ -10,6 +10,7 @@ from .NowPlaying import _get_embed
 @definecmd("play", 
            "Adds something to the queue")
 async def cmd_play(e : discord.Interaction, query : str = None, file : discord.Attachment = None):
+    if not await guild_check(e): return
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
     had_to_join = False

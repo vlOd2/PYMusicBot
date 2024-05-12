@@ -10,7 +10,7 @@ class VotingView(discord.ui.View):
     InstanceDict : dict[str, discord.ui.View] = {}
 
     @staticmethod
-    def id_to_msg(action_id : str) -> str:
+    def _id_to_msg(action_id : str) -> str:
         match action_id:
             case "skip":
                 return "skip the current song"
@@ -56,7 +56,7 @@ class VotingView(discord.ui.View):
             self._invoker
         ), view=None)
 
-    async def update(self):
+    async def _update(self):
         if self._done: 
             await self.msg.edit(content="Another vote of this type is already outgoing!", view=None)
             self.stop()
@@ -64,14 +64,14 @@ class VotingView(discord.ui.View):
         
         await self.msg.edit(content=None, embed=EmbedUtils.state(
             "Vote",
-            f"{self._invoker.name} would like to {VotingView.id_to_msg(self._action_id)}\n" +
+            f"{self._invoker.name} would like to {VotingView._id_to_msg(self._action_id)}\n" +
             f"**{len(self._votes)}** votes out of the needed **{self._required}**\n" +
             f"This vote will time out in {Constants.VOTE_VIEW_TIMEOUT} seconds if nobody votes",
             self._invoker
         ), view=self)
 
     @discord.ui.button(label="Vote", style=discord.ButtonStyle.success)
-    async def btn_vote_yes(self, e : discord.Interaction, btn : discord.ui.Button):
+    async def _btn_vote_yes(self, e : discord.Interaction, btn : discord.ui.Button):
         if self._done: return
 
         client : PYMusicBot = e.client
@@ -87,7 +87,7 @@ class VotingView(discord.ui.View):
             return
         
         self._votes.append(e.user.id)
-        await self.update()
+        await self._update()
         await e.response.edit_message(view=self)
 
         if len(self._votes) >= self._required:

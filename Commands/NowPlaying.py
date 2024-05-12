@@ -1,7 +1,7 @@
 import discord
 import EmbedUtils
 import Constants
-from .Util.CommandUtils import definecmd, fetch_check, playing_check
+from .Util.CommandUtils import definecmd, guild_check, fetch_check, playing_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
@@ -17,7 +17,7 @@ def _get_embed(source : MediaSource) -> discord.Embed:
     embed.url = source.source_url
     embed.add_field(name="Uploader", value=uploader, inline=True)
     embed.add_field(name="Duration", value=duration, inline=True)
-    embed.set_thumbnail(url=source.thumbnail)
+    embed.set_image(url=source.thumbnail)
     EmbedUtils.add_fields(source.invoker, embed)
 
     return embed
@@ -25,6 +25,7 @@ def _get_embed(source : MediaSource) -> discord.Embed:
 @definecmd("nowplaying", 
            "Shows the currently playing song")
 async def cmd_nowplaying(e : discord.Interaction):
+    if not await guild_check(e): return
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
 

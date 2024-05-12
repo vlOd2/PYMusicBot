@@ -3,13 +3,14 @@
 
 # import discord
 # import EmbedUtils
-# from .Util.CommandUtils import definecmd, fetch_check, playing_check, channel_check
+# from .Util.CommandUtils import definecmd, guild_check, fetch_check, playing_check, channel_check
 # from PYMusicBot import PYMusicBot
 # from Player.PlayerInstance import PlayerInstance
 
 # @definecmd("", 
 #            "")
 # async def cmd_<name>(e : discord.Interaction):
+#     if not await guild_check(e): return
 #     client : PYMusicBot = e.client
 #     player : PlayerInstance | None = client.get_player(e.guild)
 

@@ -1,5 +1,6 @@
 # Handler for vote commands
 import discord
+import logging
 import EmbedUtils
 from .CommandUtils import fetch_check, playing_check, channel_check
 from PYMusicBot import PYMusicBot
@@ -9,6 +10,7 @@ from Utils import required_votes
 from typing import Callable
 
 async def handle_vote(e : discord.Interaction, 
+                        check_instant : Callable[[PlayerInstance], bool],
                         on_success : Callable[[PYMusicBot, PlayerInstance], None], 
                         action_id : str, 
                         instant_body : str):
@@ -18,10 +20,13 @@ async def handle_vote(e : discord.Interaction,
     if not await playing_check(e, player) or not await channel_check(e, player) or not await fetch_check(e, player):
         return
 
+    logger = logging.getLogger("VoteCommandHandler")
+    logger.info(f"{e.user.name} ({e.user.id}) has started a vote: {action_id}")
+
     async def on_success_wrapper():
         await on_success(client, player)
 
-    if e.user.id == player.current_source[0].invoker.id:
+    if check_instant(player):
         await e.response.send_message(embed=EmbedUtils.success("Instant vote", instant_body, e.user))
         await on_success_wrapper()
         return
@@ -30,4 +35,4 @@ async def handle_vote(e : discord.Interaction,
     await e.response.send_message(content="Loading vote, please wait...", view=view)
     view.msg = await e.original_response()
 
-    await view.update()
+    await view._update()

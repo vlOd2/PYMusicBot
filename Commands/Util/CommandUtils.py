@@ -13,6 +13,16 @@ def definecmd(name : str, description : str):
         DefinedCommands.append(cmd)
     return decorator
 
+async def guild_check(e : discord.Interaction) -> bool:
+    if e.guild == None:
+        await e.response.send_message(embed=EmbedUtils.error(
+            "Not available",
+            "Commands are only available in a guild",
+            e.user
+        ), ephemeral=True)
+        return False
+    return True
+
 async def fetch_check(e : discord.Interaction, player : PlayerInstance) -> bool:
     if player.current_source == None:
         await e.response.send_message(embed=EmbedUtils.error(
