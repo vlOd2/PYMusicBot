@@ -40,7 +40,6 @@ def formated_time(seconds) -> str:
     return timestamp.strftime('%H:%M:%S') if timestamp.hour > 0 else timestamp.strftime('%M:%S')
 
 # To dexrn: don't dexrnerify (i.e don't touch this)
-# If it doesn't work, it's an issue with ffprobe itself
 def ffprobe_duration(input) -> int:
     logger = logging.getLogger()
     args = [ 
