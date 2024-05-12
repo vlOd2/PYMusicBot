@@ -32,7 +32,7 @@ _CONFIG_FILE_NAME = "config.yml"
 
 class _CONFIG:
     def __init__(self) -> None:
-        self.PresenceText : str = "music to you!"
+        self.PresenceText : str = "Playing music to you!"
 
     def _get_logger(self):
         return logging.getLogger("Configuration")

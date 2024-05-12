@@ -6,17 +6,17 @@ from datetime import datetime, timezone
 
 def required_votes(channel : discord.VoiceChannel) -> int:
     member_count = len(channel.members) - 1
-    required = max(1, round(member_count * 0.5))
+    required = max(1, round(member_count * 0.25))
     return required
 
 def exstr(ex : BaseException) -> str:
-    traceback.print_exception(ex)
     formated : list[str] = traceback.format_exception(ex)
     output = ""
 
     for t in formated:
         output += f"{t}"
     
+    logging.getLogger().exception(ex)
     return output
 
 def progress_bar(progress, block_size) -> str:

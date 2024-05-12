@@ -1,7 +1,8 @@
 import discord
 import logging
+from Player import YoutubeDL
 from Player.PlayerInstance import PlayerInstance
-from Commands.CommandUtils import DefinedCommands
+from Commands.Util.CommandUtils import DefinedCommands
 from Config import ConfigInstance as Config
 
 class PYMusicBot(discord.Client):
@@ -11,6 +12,7 @@ class PYMusicBot(discord.Client):
         super().__init__(intents=intents)
         self.tree : discord.app_commands.CommandTree = discord.app_commands.CommandTree(self)
         self.players : list[PlayerInstance] = []
+        self.logger = logging.getLogger()
 
         # Register the slash commands
         for cmd in DefinedCommands: 
@@ -18,10 +20,13 @@ class PYMusicBot(discord.Client):
 
     async def on_ready(self):
         await self.tree.sync()
-        await self.change_presence(activity=discord.Game(Config.PresenceText))
+        await self.change_presence(activity=discord.CustomActivity(name="Warming up..."))
+        await YoutubeDL.warmup()
+        await self.change_presence(activity=discord.CustomActivity(Config.PresenceText), status=None)
+        self.logger.info("Music bot is now ready!")
 
     async def destroy_players(self):
-        logging.getLogger().warning("Destroying all player instances!")
+        self.logger.warning("Destroying all player instances!")
         for player in self.players:
             player.stop(True)
         self.players.clear()

@@ -1,6 +1,6 @@
 import discord
 import EmbedUtils
-from .CommandUtils import definecmd, channel_check
+from .Util.CommandUtils import definecmd, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
@@ -12,6 +12,7 @@ from .NowPlaying import _get_embed
 async def cmd_play(e : discord.Interaction, query : str = None, file : discord.Attachment = None):
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
+    had_to_join = False
 
     if query == None and file == None:
         await e.response.send_message(embed=EmbedUtils.error(
@@ -38,6 +39,7 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
     if player == None:
         try:
             player = await client.allocate_player(e.user, e.user.voice.channel, e.guild)
+            had_to_join = True
         except Exception as ex:
             await e.response.send_message(embed=EmbedUtils.error(
                 "Failed to join",
@@ -54,13 +56,17 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
         source = await MediaSource.fetch(query, e.user)
         result = player.add_queue(source)
     except Exception as ex:
-        # This will print the exception
-        exstr(ex)
+        error_full = exstr(ex)
+        error = ex.__str__().strip()
+        if len(error) == 0: error = error_full
+
         await e.followup.send(embed=EmbedUtils.error(
             "Fetching failed",
-            f"Fetching operation resulted into an error: {ex}",
+            error,
             e.user
         ), ephemeral=True)
+        if had_to_join: await player.stop()
+        
         return
 
     queue_state : str 

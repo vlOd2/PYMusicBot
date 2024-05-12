@@ -35,7 +35,7 @@ def setup_logger():
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
-    #logger.addHandler(setup_logger__file_logger(fallback_formatter))
+    # logger.addHandler(setup_logger__file_logger(fallback_formatter))
 
 def load_token():
     logger = logging.getLogger()
