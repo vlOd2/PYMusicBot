@@ -37,7 +37,10 @@ def logger_file() -> str:
 
 def formated_time(seconds) -> str:
     timestamp = datetime.fromtimestamp(seconds, tz=timezone.utc)
-    return timestamp.strftime('%H:%M:%S') if timestamp.hour > 0 else timestamp.strftime('%M:%S')
+    format = "%M:%S"
+    if timestamp.hour > 0: format = "%H:" + format
+    if timestamp.day > 0: format = "%d:" + format
+    return timestamp.strftime(format)
 
 # To dexrn: don't dexrnerify (i.e don't touch this)
 def ffprobe_duration(input) -> int:

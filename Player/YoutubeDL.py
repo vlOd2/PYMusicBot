@@ -17,7 +17,7 @@ YOUTUBEDL_OPTIONS = {
         "youtube": {
             "player_client": [ "android_embedded" ],
             "player_skip": [ "configs", "webpage", "js" ],
-            "skip": [ "hls", "dash", "translated_subs" ]
+            "skip": [ "translated_subs" ]
         }
     },
     "noplaylist": True,
