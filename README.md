@@ -1,12 +1,14 @@
 # ⚠ WARNING
-This version of PYMusicBot (V2) is currently in development, lacks features and is buggy<br>
-Please switch to the "main" branch for the stable release of PYMusicBot (V1)
+This version of PYMusicBot (V2) is currently in developmens, lacks features and is not polished<br>
+Please switch to the "main" branch for the stable release (albeit still buggy) of PYMusicBot (V1)
 
 # 🎶 PYMusicBot V2
-A music bot designed to be robust (by using FFmpeg)
+A music bot designed to be robust and easy to use
 
 # 📌 Features
-- Uses FFmpeg so it can play basically any file format with any codec
+- Easy installation
+- Uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/) (plays almost anything)
+- Uses slash commands, so it's easy to use
 
 <!--# 🔧 How to setup
 Check the wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
