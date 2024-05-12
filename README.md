@@ -1,9 +1,8 @@
 # ⚠ WARNING
-THE CODE THAT IS CURRENTLY HERE IS WORK IN PROGRESS AND NOT MEANT TO BE USED (V2)<br>
-FOR THE LATEST STABLE RELEASE (V1), GO [HERE](https://github.com/vlOd2/PYMusicBot/tree/4809f5a46c82d11ff90c52651577802fd6725389)
+This version of PYMusicBot (V2) is currently in development, lacks features and is buggy<br>
+Please switch to the "main" branch for the stable release of PYMusicBot (V1)
 
-
-# 🎶 PYMusicBot
+# 🎶 PYMusicBot V2
 A music bot designed to be robust (by using FFmpeg)
 
 # 📌 Features
