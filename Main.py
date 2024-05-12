@@ -1,41 +1,25 @@
-import ModuleCheck
-import logging
-from CustomColorFormatter import CustomColorFormatter
-import sys
 import os
+import sys
+import logging
 import Utils
-import discord
-import PYMusicBot
-import Config
 from Commands import *
+from PYMusicBot import PYMusicBot
 
-LOGGER_FORMAT = {
-    "fmt": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s", 
-    "datefmt": "%H:%M:%S"
-}
-
-def setup_logger__file_logger(formatter):
+def setup_logger():
     if not os.path.exists("logging"):
         os.mkdir("logging")
 
-    handler = logging.FileHandler(f"logging/{Utils.logger_file()}", "w")
-    handler.setFormatter(formatter)
-    return handler
+    logger_stream_handler = logging.StreamHandler(sys.stdout)
+    logger_file_handler = logging.FileHandler(f"logging/{Utils.get_logger_file_name()}", "w")
 
-def setup_logger():
-    formatter = CustomColorFormatter()
-    fallback_formatter = logging.Formatter(**LOGGER_FORMAT)
-
-    handler = logging.StreamHandler(sys.stdout)
-    if discord.utils.stream_supports_colour(handler.stream):
-        handler.setFormatter(formatter)
-    else:    
-        handler.setFormatter(fallback_formatter)
+    logger_formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(name)s] %(message)s", "%H:%M:%S")
+    logger_stream_handler.setFormatter(logger_formatter)
+    logger_file_handler.setFormatter(logger_formatter)
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    logger.addHandler(handler)
-    # logger.addHandler(setup_logger__file_logger(fallback_formatter))
+    logger.addHandler(logger_stream_handler)
+    logger.addHandler(logger_file_handler)
 
 def load_token():
     logger = logging.getLogger()
@@ -53,20 +37,9 @@ def load_token():
 
 def main():
     setup_logger()
-    Config.ConfigInstance.load()
-
-    api_version = discord.version_info
-    if api_version.major < 2 or api_version.minor < 4:
-        logging.getLogger().fatal("Please use discord.py 2.4+")
-        return
-
-    token = load_token()
-    if token == None: 
-        return
-
-    logging.getLogger().info("Running PYMusicBot v2... To quit, press Ctrl + C")
-    instance = PYMusicBot.PYMusicBot()
-    instance.run(token, log_handler=None)
+    logging.getLogger().info("Running PYMusicBot... To quit, press Ctrl + C")
+    instance = PYMusicBot()
+    instance.run(load_token(), log_handler=None)
 
 if __name__ == "__main__":
     main()

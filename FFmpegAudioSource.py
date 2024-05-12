@@ -6,11 +6,12 @@ FFMPEG_OPTIONS = {
 }
 
 class FFmpegAudioSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, volume=1):
+    def __init__(self, source, data, volume=1):
         super().__init__(source, volume)
+        self.data = data
         self.start_time = 0
 
     @classmethod
-    def get_instance(cls, url, volume=1):
-        return cls(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS), volume)
+    async def get_instance(clazz, data, volume=1):
+        return clazz(discord.FFmpegPCMAudio(data["url"], **FFMPEG_OPTIONS), data, volume)
     

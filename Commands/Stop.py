@@ -1,12 +1,17 @@
 import discord
-from .Util.CommandUtils import definecmd
-from .Util.VoteCommandHandler import handle_vote
-from Player.PlayerInstance import PlayerInstance
+import Utils
+from Commands.CommandHandler import CommandDeclaration, CommandHandler
+from PYMusicBot import PYMusicBot
 
-@definecmd("stop", 
-           "Clears the queue and disconnects")
-async def cmd_stop(e : discord.Interaction):
-    async def on_success(client, player : PlayerInstance):
-        await player.stop()
-    await handle_vote(e, on_success, "stop", 
-                        "You have instantly stopped the player since you invoked it!")
+@CommandDeclaration("stop", CommandHandler("Stops the current song and clears the queue"))
+async def cmd_stop(instance : PYMusicBot, 
+             message : discord.message.Message, 
+             channel : discord.channel.TextChannel, 
+             guild : discord.guild.Guild,
+             args : list[str]):
+    if instance.repeat_last_song:
+        instance.suppress_queue_stream_on_stop = True
+    instance.clear_music_queue()
+    instance.get_voice_client().stop()
+    instance.logger.info("Stopped streaming and cleared the queue")
+    await Utils.add_reaction(message, "✅")

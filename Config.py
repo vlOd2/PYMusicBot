@@ -1,61 +1,81 @@
-import yaml
-import os
+import json
 import logging
+import os
 from typing import Any
+from time import time
 
-_CONFIG_FILE_NAME = "config.yml"
+class Config():
+    def __init__(self):
+        self.OPERATING_GUILD = None
+        self.DEFAULT_VOICE_VOLUME = 1.0
+        self.BANNED_USERS = []
+        self.BANNED_ROLES = []
+        self.NO_REPLY_TO_BANNED = False
+        self.ADMIN_USERS = []
+        self.ADMIN_ROLES = []
+        self.COMMANDS_ADMIN_ONLY = False
+        self.BANNED_TEXT_CHANNELS = []
+        self.BANNED_TEXT_CHANNELS_IS_WHITELIST = False
+        self.BANNED_VOICE_CHANNELS = []
+        self.BANNED_VOICE_CHANNELS_IS_WHITELIST = False
+        self.WHITELIST_STREAM_HOSTNAMES = [
+            "cdn.discordapp.com",
+            "youtube.com",
+            "*.youtube.com",
+            "tiktok.com",
+            "*.tiktok.com",
+            "youtu.be",
+            "twitch.tv",
+            "*.twitch.tv"
+        ]
+        self.WHITELIST_IS_BLACKLIST = False
+        self.VC_CHECK_TICK_INTERVAL = 5
 
-# !!! WARNING !!!
-# DO NOT MODIFY THIS FILE FOR CONFIGURATION
-# INSTEAD, RUN THE BOT AND EDIT "config.yml"
-# YOU HAVE BEEN WARNED !!!
+    def export_json(self):
+        return json.dumps(self, default=lambda obj: obj.__dict__, indent=4)
 
-# !!! WARNING !!!
-# DO NOT MODIFY THIS FILE FOR CONFIGURATION
-# INSTEAD, RUN THE BOT AND EDIT "config.yml"
-# YOU HAVE BEEN WARNED !!!
-
-# !!! WARNING !!!
-# DO NOT MODIFY THIS FILE FOR CONFIGURATION
-# INSTEAD, RUN THE BOT AND EDIT "config.yml"
-# YOU HAVE BEEN WARNED !!!
-
-# !!! WARNING !!!
-# DO NOT MODIFY THIS FILE FOR CONFIGURATION
-# INSTEAD, RUN THE BOT AND EDIT "config.yml"
-# YOU HAVE BEEN WARNED !!!
-
-# !!! WARNING !!!
-# DO NOT MODIFY THIS FILE FOR CONFIGURATION
-# INSTEAD, RUN THE BOT AND EDIT "config.yml"
-# YOU HAVE BEEN WARNED !!!
-
-class _CONFIG:
-    def __init__(self) -> None:
-        self.PresenceText : str = "Playing music to you!"
-
-    def _get_logger(self):
-        return logging.getLogger("Configuration")
-
-    def load(self):
-        if not os.path.exists(_CONFIG_FILE_NAME):
-            self._get_logger().warning("Config doesn't exist, creating default...")
-            self.save()
-            return
-        self._get_logger().info("Loading config...")
-
-        config_file = open(_CONFIG_FILE_NAME, "r")
-        loaded : dict[str, Any] = yaml.safe_load(config_file)
-        config_file.close()
-
-        for key, value in loaded.items():
+    def import_json(self, exported):
+        parsed_exported : dict[str, Any] = json.loads(exported)
+        for key, value in parsed_exported.items():
             self.__dict__[key] = value
 
-    def save(self):
-        self._get_logger().info("Saving config...")
-        config_file = open(_CONFIG_FILE_NAME, "w")
-        yaml.safe_dump(self.__dict__, config_file)
-        config_file.flush()
+    @classmethod
+    def _create_default_config(clazz):
+        logger = logging.getLogger("PYMusicBot")
+        logger.info("Creating default config")
+        config_file = open("config.json", "w")
+        config_file.write(clazz().export_json())
         config_file.close()
 
-ConfigInstance = _CONFIG()
+    def load(self):
+        logger = logging.getLogger("PYMusicBot")
+
+        if not os.path.exists("config.json"):
+            Config._create_default_config()
+        else:
+            logger.info("Loading config...")
+            try:
+                # I don't really like using "with" but less jank in the exception handling
+                with open("config.json", "r+") as config_file:
+                    self.import_json(config_file.read())
+                    config_file.seek(0)
+                    config_file.write(self.export_json())
+                    config_file.truncate()
+                logger.info(f"Loaded config")
+            except Exception as ex:
+                logger.warning(f"Unable to load the config:")
+                logger.exception(ex)
+                os.rename("config.json", f"config_broken_{int(time() * 1000)}.json")
+                Config._create_default_config()
+
+    def save(self):
+        logger = logging.getLogger("PYMusicBot")
+        logger.info("Saving config...")
+
+        try:
+            with open("config.json", "w") as config_file:
+                config_file.write(self.export_json())
+            logger.info(f"Saved config")
+        except Exception as ex:
+            logger.warning(f"Unable to save the config:")
+            logger.exception(ex)
