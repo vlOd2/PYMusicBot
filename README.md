@@ -1,6 +1,6 @@
 # ⚠ WARNING
 This version of PYMusicBot (V2) is currently in developmens, lacks features and is not polished<br>
-Please switch to the "main" branch for the stable release (albeit still buggy) of PYMusicBot (V1)
+Please switch to the "main" branch for the stable release (albeit buggy) of PYMusicBot (V1)
 
 # 🎶 PYMusicBot V2
 A music bot designed to be robust and easy to use
