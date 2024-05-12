@@ -35,12 +35,18 @@ def progress_bar(progress, block_size) -> str:
 def logger_file() -> str:
     return datetime.now().strftime("%H-%M-%S %d.%m.%Y.log")
 
-def formated_time(seconds) -> str:
-    timestamp = datetime.fromtimestamp(seconds, tz=timezone.utc)
-    format = "%M:%S"
-    if timestamp.hour > 0: format = "%H:" + format
-    if timestamp.day > 0: format = "%d:" + format
-    return timestamp.strftime(format)
+def formated_time(timestamp : int) -> str:
+    seconds = timestamp % 60
+    minutes = timestamp // 60 % 60
+    hours = timestamp // 60 // 60 % 24
+    days = timestamp // 60 // 60 // 24
+
+    time_str = ""
+    if days > 0: time_str += f"{days}:"
+    if hours > 0: time_str += f"{hours}:"
+    time_str += f"{minutes:02d}:{seconds:02d}"
+
+    return time_str
 
 # To dexrn: don't dexrnerify (i.e don't touch this)
 def ffprobe_duration(input) -> int:
