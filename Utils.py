@@ -6,7 +6,7 @@ import Constants
 from datetime import datetime, timezone
 
 def required_votes(channel : discord.VoiceChannel) -> int:
-    member_count = len(channel.members) - 1
+    member_count = len(channel.members) - 1 # exclude the bot
     required = max(1, round(member_count * Constants.VOTES_REQUIRED_RATIO))
     return required
 

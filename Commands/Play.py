@@ -6,7 +6,6 @@ from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
 from Utils import exstr
 from .NowPlaying import _get_embed
-from Config import ConfigInstance as Config
 
 @definecmd("play", 
            "Adds something to the queue")

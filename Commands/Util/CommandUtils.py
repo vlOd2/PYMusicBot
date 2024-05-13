@@ -7,12 +7,29 @@ from Player.PlayerInstance import PlayerInstance
 
 DefinedCommands : list[commands.Command] = []
 
+
 # Custom decorator that makes it so easy to add all the commands
 def definecmd(name : str, description : str):
     def decorator(func):
         cmd = commands.Command(name=name, description=description, callback=func)
         DefinedCommands.append(cmd)
     return decorator
+
+async def admin_check(e : discord.Interaction) -> bool:
+    if e.user.id in Config.AdminUsers:
+        return True
+    else:
+        for role in e.user.roles:
+            if role.id in Config.AdminRoles:
+                return True
+
+    await e.response.send_message(embed=EmbedUtils.error(
+        "Insufficient permissions",
+        ("Only administrators are allowed to run this command\n" + 
+        f"NOTE: Admins in this context doesn't mean server admins"),
+        e.user
+    ), ephemeral=True)
+    return False
 
 async def guild_user_check(e : discord.Interaction) -> bool:
     if e.guild == None:

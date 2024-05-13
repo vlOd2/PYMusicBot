@@ -29,7 +29,7 @@ class PYMusicBot(discord.Client):
     async def destroy_players(self):
         self.logger.warning("Destroying all player instances!")
         for player in self.players:
-            player.stop(True)
+            await player.stop(True)
         self.players.clear()
 
     def get_player(self, guild : discord.Guild) -> PlayerInstance | None:

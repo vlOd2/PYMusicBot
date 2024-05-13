@@ -14,4 +14,4 @@ async def cmd_whoinvoked(e : discord.Interaction):
     if not await playing_check(e, player) or not await fetch_check(e, player):
         return
 
-    await e.response.send_message(embed=EmbedUtils.state(None, None, player.invoker))
+    await e.response.send_message(embed=EmbedUtils.state(None, None, player.invoker), ephemeral=True)

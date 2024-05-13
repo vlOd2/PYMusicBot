@@ -28,7 +28,7 @@ YOUTUBEDL_OPTIONS = {
     "logtostderr": True,
     "quiet": True,
     "no_warnings": True,
-    "color": "always",
+    "color": "never",
     "default_search": "auto",
     "source_address": "0.0.0.0"
 }

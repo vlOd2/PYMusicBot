@@ -2,18 +2,19 @@
 import discord
 import logging
 import EmbedUtils
-from .CommandUtils import fetch_check, playing_check, channel_check
+from .CommandUtils import admin_check, fetch_check, playing_check, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.VotingView import VotingView
 from Utils import required_votes
 from typing import Callable
 
-async def handle_vote(e : discord.Interaction, 
-                        check_instant : Callable[[PlayerInstance], bool],
-                        on_success : Callable[[PYMusicBot, PlayerInstance], None], 
-                        action_id : str, 
-                        instant_body : str):
+async def handle_vote(e : discord.Interaction,
+                      check_instant : Callable[[PlayerInstance], bool],
+                      on_success : Callable[[PYMusicBot, PlayerInstance], None], 
+                      action_id : str, 
+                      instant_body : str,
+                      force : bool = False): 
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
 
@@ -26,9 +27,14 @@ async def handle_vote(e : discord.Interaction,
         logger.info(f"{action_id} vote was successful")
         await on_success(client, player)
 
-    if check_instant(player):
+    if check_instant(player) or force:
+        if force and not await admin_check(e):
+            return
         logger.info(f"{e.user.name} ({e.user.id}) has done an instant vote: {action_id}")
-        await e.response.send_message(embed=EmbedUtils.success("Instant vote", instant_body, e.user))
+        await e.response.send_message(embed=EmbedUtils.success(
+            f"Instant vote{" (forced)" if force else ""}", 
+            instant_body if not force else None, 
+            e.user))
         await on_success_wrapper()
         return
 

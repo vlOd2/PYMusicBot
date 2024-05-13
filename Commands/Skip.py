@@ -5,7 +5,7 @@ from Player.PlayerInstance import PlayerInstance
 
 @definecmd("skip", 
            "Skips the currently playing song")
-async def cmd_skip(e : discord.Interaction):
+async def cmd_skip(e : discord.Interaction, force : bool = False):
     if not await guild_user_check(e): return
     
     async def on_success(client, player : PlayerInstance):
@@ -15,4 +15,5 @@ async def cmd_skip(e : discord.Interaction):
                       lambda player: e.user.id == player.current_source[0].invoker.id,
                       on_success, 
                       "skip", 
-                      "You have instantly skipped the current song since you queued it")
+                      "You have instantly skipped the current song since you queued it",
+                      force)

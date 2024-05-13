@@ -5,7 +5,7 @@ from Player.PlayerInstance import PlayerInstance
 
 @definecmd("stop", 
            "Clears the queue and disconnects")
-async def cmd_stop(e : discord.Interaction):
+async def cmd_stop(e : discord.Interaction, force : bool = False):
     if not await guild_user_check(e): return
     
     async def on_success(client, player : PlayerInstance):
@@ -15,4 +15,5 @@ async def cmd_stop(e : discord.Interaction):
                       lambda player: e.user.id == player.invoker.id,
                       on_success, 
                       "stop", 
-                      "You have instantly stopped the player since you invoked it!")
+                      "You have instantly stopped the player since you invoked it!",
+                      force)
