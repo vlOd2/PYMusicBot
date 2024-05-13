@@ -1,16 +1,17 @@
 import discord
 import EmbedUtils
-from .Util.CommandUtils import definecmd, guild_check, channel_check
+from .Util.CommandUtils import definecmd, guild_user_check, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
 from Utils import exstr
 from .NowPlaying import _get_embed
+from Config import ConfigInstance as Config
 
 @definecmd("play", 
            "Adds something to the queue")
 async def cmd_play(e : discord.Interaction, query : str = None, file : discord.Attachment = None):
-    if not await guild_check(e): return
+    if not await guild_user_check(e): return
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
     had_to_join = False
@@ -22,8 +23,7 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
             e.user
         ), ephemeral=True)
         return
-
-    if file != None:
+    elif file != None:
         query = file.url
 
     if player == None and e.user.voice == None:
@@ -42,16 +42,27 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
             player = await client.allocate_player(e.user, e.user.voice.channel, e.guild)
             had_to_join = True
         except Exception as ex:
+            exstr(ex) # Log the exception
             await e.response.send_message(embed=EmbedUtils.error(
                 "Failed to join",
-                f"Couldn't join the voice channel, please report this to an administrator:\n{exstr(ex)}",
+                f"Couldn't join the voice channel:\n{ex}",
                 e.user
             ), ephemeral=True)
             return
 
+    if player.locked:
+        await e.response.send_message(embed=EmbedUtils.error(
+            "Player is locked",
+            (f"The player is currently locked\n" + 
+            f"Another play operation may be outgoing"),
+            e.user
+        ), ephemeral=True)
+        return
+
     source : MediaSource
     result : bool
     try:
+        player.locked = True
         await e.response.defer()
         player.logger.info(f"Fetching {e.user.name}'s ({e.user.id}) query \"{query}\"...")
         source = await MediaSource.fetch(query, e.user)
@@ -69,6 +80,8 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
         if had_to_join: await player.stop()
         
         return
+    finally:
+        player.locked = False
 
     queue_state : str 
     if result:

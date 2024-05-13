@@ -19,10 +19,11 @@ class PYMusicBot(discord.Client):
             self.tree.add_command(cmd)
 
     async def on_ready(self):
+        self.logger.info("Synchronizing slash commands tree...")
         await self.tree.sync()
-        await self.change_presence(activity=discord.CustomActivity(name="Warming up..."))
+        self.logger.info("Synchronized slash commands tree")
         await YoutubeDL.warmup()
-        await self.change_presence(activity=discord.CustomActivity(Config.PresenceText), status=None)
+        await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
         self.logger.info("Music bot is now ready!")
 
     async def destroy_players(self):
@@ -44,12 +45,11 @@ class PYMusicBot(discord.Client):
         if self.get_player(guild) != None:
             raise Exception("Player already allocated, use get_player")
 
-        # TODO: Add restriction checks on the invoker
-        # TODO: Add restriction checks on the channel
         perms = channel.permissions_for(guild.get_member(self.user.id))
-
-        if not perms.connect or not perms.speak:
-            raise Exception("Not enough permissions to join")
+        if not perms.connect or not perms.speak: 
+            raise Exception("Insufficient permissions to join")
+        elif channel.id in Config.BannedChannels: 
+            raise Exception("Channel has been blacklisted")
 
         player = PlayerInstance(invoker, channel, guild, self)
         await player.start()

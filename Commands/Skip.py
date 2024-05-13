@@ -1,12 +1,12 @@
 import discord
-from .Util.CommandUtils import definecmd, guild_check
+from .Util.CommandUtils import definecmd, guild_user_check
 from .Util.VoteCommandHandler import handle_vote
 from Player.PlayerInstance import PlayerInstance
 
 @definecmd("skip", 
            "Skips the currently playing song")
 async def cmd_skip(e : discord.Interaction):
-    if not await guild_check(e): return
+    if not await guild_user_check(e): return
     
     async def on_success(client, player : PlayerInstance):
         player.skip()

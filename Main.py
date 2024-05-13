@@ -54,6 +54,7 @@ def load_token():
 def main():
     setup_logger()
     Config.ConfigInstance.load()
+    Config.ConfigInstance.save()
 
     api_version = discord.version_info
     if api_version.major < 2 or api_version.minor < 4:

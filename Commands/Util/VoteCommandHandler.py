@@ -21,16 +21,18 @@ async def handle_vote(e : discord.Interaction,
         return
 
     logger = logging.getLogger("VoteCommandHandler")
-    logger.info(f"{e.user.name} ({e.user.id}) has started a vote: {action_id}")
 
     async def on_success_wrapper():
+        logger.info(f"{action_id} vote was successful")
         await on_success(client, player)
 
     if check_instant(player):
+        logger.info(f"{e.user.name} ({e.user.id}) has done an instant vote: {action_id}")
         await e.response.send_message(embed=EmbedUtils.success("Instant vote", instant_body, e.user))
         await on_success_wrapper()
         return
 
+    logger.info(f"{e.user.name} ({e.user.id}) has started a vote: {action_id}")
     view = VotingView(action_id, required_votes(player.channel), e.user, on_success_wrapper)
     await e.response.send_message(content="Loading vote, please wait...", view=view)
     view.msg = await e.original_response()

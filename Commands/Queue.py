@@ -2,7 +2,7 @@ import discord
 import EmbedUtils
 import Constants
 import math
-from .Util.CommandUtils import definecmd, guild_check, fetch_check, playing_check, channel_check
+from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing_check, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
@@ -58,7 +58,7 @@ class _QueueView(discord.ui.View):
 @definecmd("queue", 
            "Lists the player's queue")
 async def cmd_queue(e : discord.Interaction):
-    if not await guild_check(e): return
+    if not await guild_user_check(e): return
     client : PYMusicBot = e.client
     player : PlayerInstance | None = client.get_player(e.guild)
 

@@ -31,7 +31,11 @@ from typing import Any
 
 class _CONFIG:
     def __init__(self) -> None:
-        self.PresenceText : str = "Playing music to you!"
+        self.PresenceText : str = "music to you!"
+        self.AdminRoles : list[int] = []
+        self.AdminUsers : list[int] = []
+        self.BannedChannels : list[int] = [] 
+        self.BannedUsers : list[int] = []
 
     def _get_logger(self):
         return logging.getLogger("Configuration")

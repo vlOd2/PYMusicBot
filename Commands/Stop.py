@@ -1,12 +1,12 @@
 import discord
-from .Util.CommandUtils import definecmd, guild_check
+from .Util.CommandUtils import definecmd, guild_user_check
 from .Util.VoteCommandHandler import handle_vote
 from Player.PlayerInstance import PlayerInstance
 
 @definecmd("stop", 
            "Clears the queue and disconnects")
 async def cmd_stop(e : discord.Interaction):
-    if not await guild_check(e): return
+    if not await guild_user_check(e): return
     
     async def on_success(client, player : PlayerInstance):
         await player.stop()

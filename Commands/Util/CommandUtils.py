@@ -1,6 +1,7 @@
 # Utilities used by commands or similar
 import discord
 import EmbedUtils
+from Config import ConfigInstance as Config
 from discord.app_commands import commands
 from Player.PlayerInstance import PlayerInstance
 
@@ -13,7 +14,7 @@ def definecmd(name : str, description : str):
         DefinedCommands.append(cmd)
     return decorator
 
-async def guild_check(e : discord.Interaction) -> bool:
+async def guild_user_check(e : discord.Interaction) -> bool:
     if e.guild == None:
         await e.response.send_message(embed=EmbedUtils.error(
             "Not available",
@@ -21,6 +22,11 @@ async def guild_check(e : discord.Interaction) -> bool:
             e.user
         ), ephemeral=True)
         return False
+
+    if e.user.id in Config.BannedUsers:
+        # Let the command time out
+        return False
+
     return True
 
 async def fetch_check(e : discord.Interaction, player : PlayerInstance) -> bool:
@@ -36,8 +42,8 @@ async def fetch_check(e : discord.Interaction, player : PlayerInstance) -> bool:
 async def playing_check(e : discord.Interaction, player : PlayerInstance) -> bool:
     if player == None:
         await e.response.send_message(embed=EmbedUtils.error(
-            "Not connected",
-            "Not currently connected in a voice channel",
+            "Player not connected",
+            "The player is not currently connected in a voice channel",
             e.user
         ), ephemeral=True)
         return False

@@ -25,7 +25,10 @@ class PlayerInstance:
         self.logger : logging.Logger = logging.getLogger(f"PlayerInstance-{guild.id}")
         self._queue : list[MediaSource] = []
         self.current_source : tuple[MediaSource, FFmpegAudioSource] = None
-        self._terminating = False
+        self._terminating : bool = False
+        self._locked : bool = False
+        self.repeat : bool = False
+        self._ignore_repeat : bool = False
         client.event(self.on_voice_state_update)
 
     async def on_voice_state_update(self, member : discord.Member, 
@@ -48,6 +51,15 @@ class PlayerInstance:
         self._voice_client.play(raw_source, after=self._on_source_end__wrapper)
 
     async def _play_queue_next(self):
+        if not self._ignore_repeat:
+            if self.repeat:
+                self.logger.info("Repeating current song...")
+                self._play(self.current_source[0])
+                return            
+        else:
+            self.logger.info("Ignoring repeat status (probably skipped)")
+            self._ignore_repeat = False
+
         if len(self._queue) == 0:
             self.logger.info("Queue is empty, disconnecting...")
             await self.stop()
@@ -77,6 +89,7 @@ class PlayerInstance:
     def skip(self):
         if self.current_source == None: return
         self.logger.info("Skipping current source...")
+        self._ignore_repeat = True
         self._voice_client.stop()
 
     def add_queue(self, source : MediaSource) -> bool:
@@ -89,3 +102,12 @@ class PlayerInstance:
 
     def clear_queue(self):
         self._queue.clear()
+
+    @property
+    def locked(self) -> bool:
+        return self._locked
+    
+    @locked.setter
+    def locked(self, value : bool):
+        self.logger.info(f"Setting locked state to: {value}")
+        self._locked = value
