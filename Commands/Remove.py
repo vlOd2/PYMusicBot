@@ -26,6 +26,7 @@ async def cmd_remove(e : discord.Interaction, index : int):
         return
     
     source : MediaSource = player._queue.pop(real_index)
+    player.logger.info(f"Queue entry at {real_index} removed (by {e.user.id})")
 
     await e.response.send_message(embed=EmbedUtils.success(
         title="Queue modified",

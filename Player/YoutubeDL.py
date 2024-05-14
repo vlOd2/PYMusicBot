@@ -11,6 +11,7 @@ def match_func(info_dict, incomplete=False):
     return None
 
 YOUTUBEDL_OPTIONS = {
+    "allowed_extractors": "",
     "format": "bestaudio/best",
     "check_formats": False,
     "extractor_args": {
@@ -32,16 +33,14 @@ YOUTUBEDL_OPTIONS = {
     "default_search": "auto",
     "source_address": "0.0.0.0"
 }
-YOUTUBEDL_FLAT_OPTIONS = YOUTUBEDL_OPTIONS.copy()
-YOUTUBEDL_FLAT_OPTIONS["extract_flat"] = True
+FETCH_TIMEOUT = 60
 
-_youtubedl = yt_dlp.YoutubeDL(YOUTUBEDL_OPTIONS)
-_flat_youtubedl = yt_dlp.YoutubeDL(YOUTUBEDL_FLAT_OPTIONS)
-_warm_up_done = False
+_youtubedl = yt_dlp.YoutubeDL(YOUTUBEDL_OPTIONS, auto_init=False)
+_finished_loading = False
 
-async def fetch(query) -> dict[str, Any]:
-    if not _warm_up_done: raise Exception("yt-dlp warm-up has not finished!")
-    data = await _fetch(query, _youtubedl)
+async def fetch(query : str) -> dict[str, Any]:
+    if not _finished_loading: raise Exception("Extractors haven't been loaded!")
+    data = await _fetch(query, True)
 
     if "entries" in data:
         if len(data["entries"]) < 1:
@@ -55,21 +54,22 @@ async def fetch(query) -> dict[str, Any]:
 
     return data
 
-async def fetch_flat(query) -> dict[str, Any]:
-    if not _warm_up_done: raise Exception("yt-dlp warm-up has not finished!")
-    return await _fetch(query, _flat_youtubedl)
+async def fetch_flat(query : str) -> dict[str, Any]:
+    if not _finished_loading: raise Exception("Extractors haven't been loaded!")
+    return await _fetch(query, False)
 
-async def _fetch(query, instance : yt_dlp.YoutubeDL) -> dict[str, Any]:
-    return await asyncio.get_running_loop().run_in_executor(None, lambda: instance.extract_info(query, download=False))
+async def _fetch(query : str, process : bool) -> dict[str, Any]:
+    future = asyncio.get_running_loop().run_in_executor(None, lambda: _youtubedl.extract_info(query, download=False, process=process))
+    return await asyncio.wait_for(future, FETCH_TIMEOUT)
 
-async def warmup():
-    global _warm_up_done
-    logger = logging.getLogger("yt-dlp-warmup")
-    logger.warning("Skipping warm-up because I want to fucking test")
-    # logger.info("Warming up yt-dlp...")
-    # for h in logger.handlers: h.flush()
-    # await _fetch("Rick Roll", _youtubedl)
-    # logger.info("Finished search warm-up")
-    # await _fetch("https://www.youtube.com/watch?v=dQw4w9WgXcQ", _youtubedl)
-    # logger.info("Finished direct URL warm-up")
-    _warm_up_done = True
+def load_extractors(extractor_ids : list[str]):
+    global _finished_loading
+    logger = logging.getLogger("yt-dlp-preload")
+    logger.info("Loading yt-dlp extractors...")
+
+    for extractor_id in extractor_ids:
+        logger.info(f"Loading extractor \"{extractor_id}\"...")
+        _youtubedl.get_info_extractor(extractor_id)
+
+    logger.info("Loaded yt-dlp extractors")
+    _finished_loading = True

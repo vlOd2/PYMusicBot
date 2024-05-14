@@ -1,5 +1,6 @@
 import discord
 import EmbedUtils
+import logging
 from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing_check, channel_check
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
@@ -20,6 +21,8 @@ async def cmd_repeat(e : discord.Interaction, new_state : bool | None = None):
         return
     
     player.repeat = new_state
+    player.logger.info(f"Repeat state set to {player.repeat} (by {e.user.id})")
+
     await e.response.send_message(embed=EmbedUtils.state(
         "Repeat state updated",
         f"The repeat state was updated to: {player.repeat}", 

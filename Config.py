@@ -31,6 +31,7 @@ from typing import Any
 
 class _CONFIG:
     def __init__(self) -> None:
+        self.YTDLPExtractors : list[str] = [ "Youtube", "YoutubeYtBe", "YoutubeSearch", "Generic" ]
         self.PresenceText : str = "music to you!"
         self.AdminRoles : list[int] = []
         self.AdminUsers : list[int] = []

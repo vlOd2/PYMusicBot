@@ -50,6 +50,15 @@ class PlayerInstance:
         self.current_source = (source, raw_source)
         self._voice_client.play(raw_source, after=self._on_source_end__wrapper)
 
+    # EQBL = Queue Ended But Locked
+    async def _qebl_timeout(self):
+        await asyncio.sleep(5)
+        if self._locked:
+            self.logger.info("QEBL: Still locked after timeout ended, quitting...")
+            await self.stop()
+            return
+        self.logger.info("QEBL: Not locked after timeout ended")
+
     async def _play_queue_next(self):
         if not self._ignore_repeat:
             if self.repeat:
@@ -61,9 +70,18 @@ class PlayerInstance:
             self._ignore_repeat = False
 
         if len(self._queue) == 0:
+            if self._locked:
+                self.logger.info("Queue is empty but player is locked... (QEBL)")
+                self.logger.info("QEBL: Clearing current source and starting timeout")
+                if self.current_source != None: self.current_source[1].cleanup()
+                self.current_source = None
+                asyncio.Task(self._qebl_timeout(), loop=self._client.loop)
+                return
+            
             self.logger.info("Queue is empty, disconnecting...")
             await self.stop()
             return
+        
         self._play(self._queue.pop(0))
 
     def _on_source_end__wrapper(self, ex : Exception):
