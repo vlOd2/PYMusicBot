@@ -20,11 +20,11 @@ class PYMusicBot(discord.Client):
 
     async def on_ready(self):
         self.logger.info("Synchronizing slash commands tree...")
-        await self.tree.sync()
-        self.logger.info("Synchronized slash commands tree")
+        # await self.tree.sync()
+        # self.logger.info("Synchronized slash commands tree")
         YoutubeDL.load_extractors(Config.YTDLPExtractors)
         await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
-        self.logger.info("Music bot is now ready!")
+        self.logger.info("Ready! Waiting for commands...")
 
     async def destroy_players(self):
         self.logger.warning("Destroying all player instances!")
@@ -51,6 +51,7 @@ class PYMusicBot(discord.Client):
         elif channel.id in Config.BannedChannels: 
             raise Exception("Channel has been blacklisted")
 
+        self.logger.info(f"{invoker.name}/{invoker.id}: Allocating player for {guild.name}/{guild.id}")
         player = PlayerInstance(invoker, channel, guild, self)
         await player.start()
         self.players.append(player)

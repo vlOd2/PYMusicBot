@@ -30,7 +30,7 @@ async def handle_vote(e : discord.Interaction,
     if check_instant(player) or force:
         if force and not await admin_check(e):
             return
-        logger.info(f"{e.user.name} ({e.user.id}) has done an instant vote: {action_id}")
+        logger.info(f"{e.user.name}/{e.user.id} has done an instant vote: {action_id}")
         await e.response.send_message(embed=EmbedUtils.success(
             f"Instant vote{" (forced)" if force else ""}", 
             instant_body if not force else None, 
@@ -38,7 +38,7 @@ async def handle_vote(e : discord.Interaction,
         await on_success_wrapper()
         return
 
-    logger.info(f"{e.user.name} ({e.user.id}) has started a vote: {action_id}")
+    logger.info(f"{e.user.name}/{e.user.id} has started a vote: {action_id}")
     view = VotingView(action_id, required_votes(player.channel), e.user, on_success_wrapper)
     await e.response.send_message(content="Loading vote, please wait...", view=view)
     view.msg = await e.original_response()

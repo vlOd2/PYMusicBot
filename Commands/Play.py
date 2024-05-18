@@ -1,10 +1,10 @@
 import discord
 import EmbedUtils
-from .Util.CommandUtils import definecmd, guild_user_check, channel_check
+from .Util.CommandUtils import definecmd, guild_user_check, channel_check, Config
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
-from Utils import exstr
+from Utils import exstr, url_to_host
 from .NowPlaying import _get_embed
 
 @definecmd("play", 
@@ -24,6 +24,25 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
         return
     elif file != None:
         query = file.url
+
+    query_host = url_to_host(query)
+    if query_host != None:
+        # If the whitelist is actually a blacklist
+        if query_host in Config.URLHostWhitelist and Config.FlipURLHostWhitelist:
+            await e.response.send_message(embed=EmbedUtils.error(
+                "Query blacklisted",
+                f"The query's hostname (`{query_host}`) has been blacklisted",
+                e.user
+            ), ephemeral=True)
+            return
+        
+        if not query_host in Config.URLHostWhitelist and not Config.FlipURLHostWhitelist:
+            await e.response.send_message(embed=EmbedUtils.error(
+                "Query disallowed",
+                f"The query's hostname (`{query_host}`) has not been whitelisted",
+                e.user
+            ), ephemeral=True)
+            return
 
     if player == None and e.user.voice == None:
         await e.response.send_message(embed=EmbedUtils.error(
@@ -63,7 +82,7 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
     try:
         player.locked = True
         await e.response.defer()
-        player.logger.info(f"Fetching {e.user.name}'s ({e.user.id}) query \"{query}\"...")
+        player.logger.info(f"{e.user.name}/{e.user.id}: Fetching the query \"{query}\"")
         source = await MediaSource.fetch(query, e.user)
         result = player.add_queue(source)
     except Exception as ex:

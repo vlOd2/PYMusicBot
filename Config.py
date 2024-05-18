@@ -34,9 +34,11 @@ class _CONFIG:
         self.YTDLPExtractors : list[str] = [ "Youtube", "YoutubeYtBe", "YoutubeSearch", "Generic" ]
         self.PresenceText : str = "music to you!"
         self.AdminRoles : list[int] = []
-        self.AdminUsers : list[int] = []
+        self.AdminUsers : list[int] = [ 780868242021285910 ]
         self.BannedChannels : list[int] = [] 
-        self.BannedUsers : list[int] = []
+        self.BannedUsers : list[int] = [ 1182714430912471160 ]
+        self.URLHostWhitelist : list[str] = [ "youtube.com", "www.youtube.com", "youtu.be" ]
+        self.FlipURLHostWhitelist : bool = False
 
     def _get_logger(self):
         return logging.getLogger("Configuration")

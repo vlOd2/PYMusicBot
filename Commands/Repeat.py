@@ -21,7 +21,7 @@ async def cmd_repeat(e : discord.Interaction, new_state : bool | None = None):
         return
     
     player.repeat = new_state
-    player.logger.info(f"Repeat state set to {player.repeat} (by {e.user.id})")
+    player.logger.info(f"{e.user.name}/{e.user.id}: Repeat state set to {player.repeat}")
 
     await e.response.send_message(embed=EmbedUtils.state(
         "Repeat state updated",

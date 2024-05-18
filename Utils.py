@@ -1,9 +1,22 @@
+import urllib.parse
 import discord
 import traceback
 import logging
 import subprocess
 import Constants
-from datetime import datetime, timezone
+from urllib.parse import urlparse, urljoin, ParseResult
+from datetime import datetime
+
+def url_to_host(url : str) -> str:
+    try:
+        parse = urlparse(urljoin(url, "/"), scheme="http")
+
+        if not (all([parse.scheme, parse.netloc, parse.path]) and len(parse.netloc.split(".")) > 1):
+            return None
+
+        return parse.netloc
+    except:
+        return None
 
 def required_votes(channel : discord.VoiceChannel) -> int:
     member_count = len(channel.members) - 1 # exclude the bot

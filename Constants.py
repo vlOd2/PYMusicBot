@@ -1,5 +1,6 @@
 # Constant values that never change
 # You can change these if you want, but it's not recommended
+APP_VERSION = "2.0.0"
 CONFIG_FILE_NAME = "config.yml"
 EMBED_COLOR_SUCCESS = 0x00FF06
 EMBED_COLOR_ERROR = 0xFF0000
