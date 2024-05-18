@@ -9,6 +9,8 @@ from .NowPlaying import _get_embed
 
 @definecmd("play", 
            "Adds something to the queue")
+@discord.app_commands.describe(query="Search query or direct URL")
+@discord.app_commands.describe(file="File to directly play")
 async def cmd_play(e : discord.Interaction, query : str = None, file : discord.Attachment = None):
     if not await guild_user_check(e): return
     client : PYMusicBot = e.client

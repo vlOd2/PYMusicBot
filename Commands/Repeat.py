@@ -7,6 +7,7 @@ from Player.PlayerInstance import PlayerInstance
 
 @definecmd("repeat", 
            "Sets/gets the repeat status")
+@discord.app_commands.describe(new_state="The new repeat state")
 async def cmd_repeat(e : discord.Interaction, new_state : bool | None = None):
     if not await guild_user_check(e): return
     client : PYMusicBot = e.client

@@ -5,6 +5,7 @@ from Player.PlayerInstance import PlayerInstance
 
 @definecmd("stop", 
            "Clears the queue and disconnects")
+@discord.app_commands.describe(force="Bypass voting (admin only)")
 async def cmd_stop(e : discord.Interaction, force : bool = False):
     if not await guild_user_check(e): return
     

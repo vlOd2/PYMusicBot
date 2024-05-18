@@ -1,4 +1,5 @@
 # Utilities used by commands or similar
+import inspect
 import discord
 import EmbedUtils
 from Config import ConfigInstance as Config
@@ -7,12 +8,16 @@ from Player.PlayerInstance import PlayerInstance
 
 DefinedCommands : list[commands.Command] = []
 
-
 # Custom decorator that makes it so easy to add all the commands
 def definecmd(name : str, description : str):
     def decorator(func):
-        cmd = commands.Command(name=name, description=description, callback=func)
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError("Not a coroutine!")
+        cmd = commands.Command(name=name, 
+                               description=description, 
+                               callback=func)
         DefinedCommands.append(cmd)
+        return cmd
     return decorator
 
 async def admin_check(e : discord.Interaction) -> bool:

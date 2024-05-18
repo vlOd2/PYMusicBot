@@ -5,6 +5,7 @@ from Player.PlayerInstance import PlayerInstance
 
 @definecmd("skip", 
            "Skips the currently playing song")
+@discord.app_commands.describe(force="Bypass voting (admin only)")
 async def cmd_skip(e : discord.Interaction, force : bool = False):
     if not await guild_user_check(e): return
     

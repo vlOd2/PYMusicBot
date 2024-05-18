@@ -7,6 +7,7 @@ from Player.MediaSource import MediaSource
 
 @definecmd("remove", 
            "Removes an item from the queue")
+@discord.app_commands.describe(index="The song index in the queue to remove")
 async def cmd_remove(e : discord.Interaction, index : int):
     if not await guild_user_check(e): return
     client : PYMusicBot = e.client
