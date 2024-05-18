@@ -22,8 +22,8 @@ class PYMusicBot(discord.Client):
 
     async def on_ready(self):
         self.logger.info("Synchronizing slash commands tree...")
-        # await self.tree.sync()
-        # self.logger.info("Synchronized slash commands tree")
+        await self.tree.sync()
+        self.logger.info("Synchronized slash commands tree")
         YoutubeDL.load_extractors(Config.YTDLPExtractors)
         await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
         self.logger.info("Ready! Waiting for commands...")

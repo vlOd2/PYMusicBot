@@ -34,9 +34,15 @@ class PlayerInstance:
     async def on_voice_state_update(self, member : discord.Member, 
                                     before : discord.VoiceState, 
                                     after : discord.VoiceState):
-        if (self._terminating or 
-            member != self._client.user or
-            (len(self.channel.members) - 1) < 1): return # Check if the bot is alone in vc
+        if self._terminating: return
+
+        if (len(self.channel.members) - 1) < 1:
+            self.logger.info("Voice state reports we are alone, disconnecting...")
+            await self.stop()
+            return
+
+        if member != self._client.user: 
+            return
 
         if after.channel == None:
             self.logger.info("Voice state reports we have been disconnected, cleaning up...")
