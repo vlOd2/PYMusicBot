@@ -1,10 +1,9 @@
-import urllib.parse
 import discord
 import traceback
 import logging
 import subprocess
 import Constants
-from urllib.parse import urlparse, urljoin, ParseResult
+from urllib.parse import urlparse, urljoin
 from datetime import datetime
 
 def url_to_host(url : str) -> str:

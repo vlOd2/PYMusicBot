@@ -4,6 +4,7 @@ from Player import YoutubeDL
 from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import DefinedCommands
 from Config import ConfigInstance as Config
+from time import time
 
 class PYMusicBot(discord.Client):
     def __init__(self) -> None:
@@ -13,6 +14,7 @@ class PYMusicBot(discord.Client):
         self.tree : discord.app_commands.CommandTree = discord.app_commands.CommandTree(self)
         self.players : list[PlayerInstance] = []
         self.logger = logging.getLogger()
+        self.start_time = int(time())
 
         # Register the slash commands
         for cmd in DefinedCommands: 
