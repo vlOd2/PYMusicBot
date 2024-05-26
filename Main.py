@@ -65,7 +65,7 @@ def main():
     if token == None: 
         return
 
-    logging.getLogger().info("Running PYMusicBot v2... To quit, press Ctrl + C")
+    logging.getLogger().info("Running PYMusicBot V2... To quit, press Ctrl + C")
     instance = PYMusicBot.PYMusicBot()
     instance.run(token, log_handler=None)
 
