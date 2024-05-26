@@ -14,7 +14,7 @@ YOUTUBEDL_OPTIONS = {
     "allowed_extractors": "",
     "format": "bestaudio/best",
     "check_formats": False,
-    "extractor_args": {
+    "extractor_args": { # Appears to be very fast and reliable
         "youtube": {
             "player_client": [ "android_embedded" ],
             "player_skip": [ "configs", "webpage", "js" ],
@@ -26,8 +26,8 @@ YOUTUBEDL_OPTIONS = {
     "match_filter": match_func,
     "nocheckcertificate": True,
     "ignoreerrors": False,
-    "logtostderr": True,
     "quiet": True,
+    #"verbose": False,
     "no_warnings": True,
     "color": "never",
     "default_search": "auto",

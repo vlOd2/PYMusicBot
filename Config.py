@@ -40,7 +40,18 @@ class _CONFIG:
     FlipURLHostWhitelist : bool
 
     def __init__(self) -> None:
-        self.YTDLPExtractors = [ "Youtube", "YoutubeYtBe", "YoutubeSearch", "Generic" ]
+        self.YTDLPExtractors = [
+            "Youtube", 
+            "YoutubeYtBe",
+            # TODO: Playlist support 
+            #"YoutubeTab",
+            #"YoutubePlaylist",
+            "YoutubeTruncatedID",
+            "YoutubeTruncatedURL",
+            "YoutubeConsentRedirect",
+            "YoutubeSearch", 
+            "Generic"
+        ]
         self.PresenceText = "music to you!"
         self.AdminRoles = []
         self.AdminUsers = []

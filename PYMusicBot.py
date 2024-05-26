@@ -6,6 +6,8 @@ from Commands.Util.CommandUtils import DefinedCommands
 from Config import ConfigInstance as Config
 from time import time
 
+_DEBUG_NO_TREE_SYNC = False
+
 class PYMusicBot(discord.Client):
     tree : discord.app_commands.CommandTree
     players : list[PlayerInstance]
@@ -29,10 +31,12 @@ class PYMusicBot(discord.Client):
         await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
 
     async def on_ready(self):
-        #self.logger.error("DON'T FUCKING FORGET TO RE-ENABLE SLASH COMMANDS TREE!!!")
-        self.logger.info("Synchronizing slash commands tree...")
-        await self.tree.sync()
-        self.logger.info("Synchronized slash commands tree")
+        if _DEBUG_NO_TREE_SYNC:
+            self.logger.error("DON'T FUCKING FORGET TO RE-ENABLE SLASH COMMANDS TREE!!!")
+        else:
+            self.logger.info("Synchronizing slash commands tree...")
+            await self.tree.sync()
+            self.logger.info("Synchronized slash commands tree")
         YoutubeDL.load_extractors(Config.YTDLPExtractors)
         await self._load_presence()
         self.logger.info("Ready! Waiting for commands...")
