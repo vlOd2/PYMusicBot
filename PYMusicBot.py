@@ -7,12 +7,17 @@ from Config import ConfigInstance as Config
 from time import time
 
 class PYMusicBot(discord.Client):
+    tree : discord.app_commands.CommandTree
+    players : list[PlayerInstance]
+    logger : logging.Logger
+    start_time : int
+
     def __init__(self) -> None:
         intents = discord.Intents.default()
         intents.members = True
         super().__init__(intents=intents)
-        self.tree : discord.app_commands.CommandTree = discord.app_commands.CommandTree(self)
-        self.players : list[PlayerInstance] = []
+        self.tree = discord.app_commands.CommandTree(self)
+        self.players = []
         self.logger = logging.getLogger()
         self.start_time = int(time())
 
@@ -20,13 +25,23 @@ class PYMusicBot(discord.Client):
         for cmd in DefinedCommands: 
             self.tree.add_command(cmd)
 
+    async def _load_presence(self):
+        await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
+
     async def on_ready(self):
         self.logger.info("Synchronizing slash commands tree...")
         await self.tree.sync()
         self.logger.info("Synchronized slash commands tree")
         YoutubeDL.load_extractors(Config.YTDLPExtractors)
-        await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
+        await self._load_presence()
         self.logger.info("Ready! Waiting for commands...")
+
+    async def reload_config(self):
+        self.logger.info("Reloading config...")
+        Config.save()
+        Config.load()
+        await self._load_presence()
+        self.logger.info("Reloaded config")
 
     async def destroy_players(self):
         self.logger.warning("Destroying all player instances!")

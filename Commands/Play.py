@@ -4,8 +4,30 @@ from .Util.CommandUtils import definecmd, guild_user_check, channel_check, Confi
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
-from Utils import exstr, url_to_host
+from Utils import exstr, url_to_host, matches_in_list
 from .NowPlaying import _get_embed
+
+async def _perform_host_checks(query_host : str, e : discord.Interaction) -> bool:
+    if query_host == None: return True
+    matching = matches_in_list(query_host, Config.URLHostWhitelist)
+
+    if matching and Config.FlipURLHostWhitelist: # If the whitelist is actually a blacklist
+        await e.response.send_message(embed=EmbedUtils.error(
+            "Query blacklisted",
+            f"The query's hostname (`{query_host}`) has been blacklisted",
+            e.user
+        ), ephemeral=True)
+        return False
+
+    if not matching and not Config.FlipURLHostWhitelist:
+        await e.response.send_message(embed=EmbedUtils.error(
+            "Query disallowed",
+            f"The query's hostname (`{query_host}`) has not been whitelisted",
+            e.user
+        ), ephemeral=True)
+        return False
+    
+    return True
 
 @definecmd("play", 
            "Adds something to the queue")
@@ -28,23 +50,11 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
         query = file.url
 
     query_host = url_to_host(query)
-    if query_host != None:
-        # If the whitelist is actually a blacklist
-        if query_host in Config.URLHostWhitelist and Config.FlipURLHostWhitelist:
-            await e.response.send_message(embed=EmbedUtils.error(
-                "Query blacklisted",
-                f"The query's hostname (`{query_host}`) has been blacklisted",
-                e.user
-            ), ephemeral=True)
-            return
-        
-        if not query_host in Config.URLHostWhitelist and not Config.FlipURLHostWhitelist:
-            await e.response.send_message(embed=EmbedUtils.error(
-                "Query disallowed",
-                f"The query's hostname (`{query_host}`) has not been whitelisted",
-                e.user
-            ), ephemeral=True)
-            return
+    if not await _perform_host_checks(query_host, e): 
+        return
+
+    if not await channel_check(e, player):
+        return
 
     if player == None and e.user.voice == None:
         await e.response.send_message(embed=EmbedUtils.error(
@@ -52,9 +62,6 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
             "You are not currently in a voice channel",
             e.user
         ), ephemeral=True)
-        return
-
-    if not await channel_check(e, player):
         return
 
     if player == None:

@@ -2,9 +2,16 @@ import discord
 import traceback
 import logging
 import subprocess
+import fnmatch
 import Constants
 from urllib.parse import urlparse, urljoin
 from datetime import datetime
+
+def friendly_str_to_bool(s : str) -> bool:
+    return s.lower() in [ "true", "yes", "1", "on" ]
+
+def matches_in_list(str : str, list : list[str]) -> bool:
+    return any([fnmatch.fnmatch(str, entry) for entry in list])
 
 def url_to_host(url : str) -> str:
     try:

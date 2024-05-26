@@ -3,17 +3,16 @@ from . import YoutubeDL
 from time import time
 
 class MediaSource:
-    def __init__(self) -> None:
-        self.invoker : discord.Member 
-        self.title : str
-        self.url : str
-        self.duration : int
-        self.start_time : int
-        self.source_url : str
-        self.uploader : str
-        self.uploader_url : str
-        self.thumbnail : str
-        
+    invoker : discord.Member 
+    title : str
+    url : str
+    duration : int
+    start_time : int
+    source_url : str
+    uploader : str
+    uploader_url : str
+    thumbnail : str
+
     @property
     def elapsed(self) -> int:
         return int(time()) - self.start_time if self.duration > 0 and self.start_time > 0 else -1

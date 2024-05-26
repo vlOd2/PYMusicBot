@@ -12,23 +12,36 @@ from .FFmpegAudioSource import FFmpegAudioSource
 from time import time
 
 class PlayerInstance:
+    invoker : discord.Member
+    channel : discord.VoiceChannel
+    guild : discord.Guild
+    _client : PYMusicBot.PYMusicBot
+    _voice_client : discord.VoiceClient
+    logger : logging.Logger
+    _queue : list[MediaSource]
+    current_source : tuple[MediaSource, FFmpegAudioSource]
+    _terminating : bool
+    _locked : bool
+    repeat : bool
+    _ignore_repeat : bool
+
     def __init__(self, 
                 invoker : discord.Member, 
                 channel : discord.VoiceChannel,
                 guild : discord.Guild,
                 client : PYMusicBot.PYMusicBot) -> None:
-        self.invoker : discord.Member = invoker
-        self.channel : discord.VoiceChannel = channel
-        self.guild : discord.Guild = guild
+        self.invoker = invoker
+        self.channel = channel
+        self.guild = guild
         self._client = client
-        self._voice_client : discord.VoiceClient = None
-        self.logger : logging.Logger = logging.getLogger(f"PlayerInstance-{guild.id}")
-        self._queue : list[MediaSource] = []
-        self.current_source : tuple[MediaSource, FFmpegAudioSource] = None
-        self._terminating : bool = False
-        self._locked : bool = False
-        self.repeat : bool = False
-        self._ignore_repeat : bool = False
+        self._voice_client = None
+        self.logger = logging.getLogger(f"PlayerInstance-{guild.id}")
+        self._queue = []
+        self.current_source = None
+        self._terminating = False
+        self._locked = False
+        self.repeat = False
+        self._ignore_repeat = False
         client.event(self.on_voice_state_update)
 
     async def on_voice_state_update(self, member : discord.Member, 

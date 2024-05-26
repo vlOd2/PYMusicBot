@@ -9,12 +9,15 @@ from Player.MediaSource import MediaSource
 from Utils import formated_time 
 
 class _QueueView(discord.ui.View):
+    pages : list[discord.Embed]
+    current_page : int
+    msg : discord.Message
+
     def __init__(self, pages : list[discord.Embed]):
         super().__init__(timeout=Constants.PAGE_VIEW_TIMEOUT)
         if len(pages) == 0: raise ValueError("No pages were provided")
-        self.pages : list[discord.Embed] = pages
-        self.current_page : int = 0
-        self.msg : discord.Message
+        self.pages = pages
+        self.current_page = 0
         for embed in self.pages: embed.add_field(name="Page", value="N/A", inline=False)
 
     def _clean_up(self):

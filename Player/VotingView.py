@@ -7,17 +7,14 @@ from Commands.Util.CommandUtils import channel_check
 from typing import Callable
 
 class VotingView(discord.ui.View):
-    InstanceDict : dict[str, discord.ui.View] = {}
-
-    @staticmethod
-    def _id_to_msg(action_id : str) -> str:
-        match action_id:
-            case "skip":
-                return "skip the current song"
-            case "stop":
-                return "stop the player"
-            case _:
-                return "(unknown action)"
+    InstanceDict : dict[str, discord.ui.View] = {} # Class instance
+    _action_id : str
+    _required : int
+    _done : bool
+    _invoker : discord.User
+    _votes : list[int]
+    _on_success : Callable
+    msg : discord.Message
 
     def __init__(self, action_id : str, required : int, invoker : discord.User, on_success : Callable):
         '''
@@ -26,12 +23,12 @@ class VotingView(discord.ui.View):
         - stop
         '''
         super().__init__(timeout=Constants.VOTE_VIEW_TIMEOUT)
-        self._action_id : str = action_id
-        self._required : int = required + 1
-        self._done : bool = False
-        self._invoker : discord.User = invoker
-        self._votes : list[int] = [ invoker.id ]
-        self._on_success : Callable = on_success
+        self._action_id = action_id
+        self._required = required + 1
+        self._done = False
+        self._invoker = invoker
+        self._votes = [ invoker.id ]
+        self._on_success = on_success
         self.msg : discord.Message
 
         if action_id in VotingView.InstanceDict.keys():
@@ -47,6 +44,16 @@ class VotingView(discord.ui.View):
                 VotingView.InstanceDict[action_id] = self
         else:
             VotingView.InstanceDict[action_id] = self
+
+    @staticmethod
+    def _id_to_msg(action_id : str) -> str:
+        match action_id:
+            case "skip":
+                return "skip the current song"
+            case "stop":
+                return "stop the player"
+            case _:
+                return "(unknown action)"
 
     async def on_timeout(self):
         self._done = True
