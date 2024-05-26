@@ -29,6 +29,7 @@ class PYMusicBot(discord.Client):
         await self.change_presence(activity=discord.Game(Config.PresenceText), status=None)
 
     async def on_ready(self):
+        #self.logger.error("DON'T FUCKING FORGET TO RE-ENABLE SLASH COMMANDS TREE!!!")
         self.logger.info("Synchronizing slash commands tree...")
         await self.tree.sync()
         self.logger.info("Synchronized slash commands tree")

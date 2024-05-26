@@ -4,8 +4,8 @@ from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing
 from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 
-@definecmd("search", 
-           "Searches for at most 25 results for the specified query")
+#@definecmd("search", 
+#           "Searches for at most 25 results for the specified query")
 async def cmd_search(e : discord.Interaction):
     if not await guild_user_check(e): return
     client : PYMusicBot = e.client
