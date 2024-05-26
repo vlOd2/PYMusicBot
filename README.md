@@ -9,6 +9,9 @@ A music bot designed to play various formats, be robust and easy to use
 # 🔧 How to setup
 Check the wiki page [here](https://github.com/vlOd2/PYMusicBot/wiki/Setup) for a guide on setup
 
+# 📢 Testing/Announcements server
+Check out [our official Discord server](https://discord.gg/NYWnpGxhX7) for announcements and a testing instance
+
 # ❤ Third-party attributions
 - [PyYAML](https://pypi.org/project/PyYAML/)
 - [discord.py](https://github.com/Rapptz/discord.py) (also borrowed ColourFormatter as CustomColorFormatter from it)
