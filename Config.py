@@ -43,9 +43,9 @@ class _CONFIG:
         self.YTDLPExtractors = [ "Youtube", "YoutubeYtBe", "YoutubeSearch", "Generic" ]
         self.PresenceText = "music to you!"
         self.AdminRoles = []
-        self.AdminUsers = [ 780868242021285910 ]
+        self.AdminUsers = []
         self.BannedChannels = []
-        self.BannedUsers = [ 1182714430912471160 ]
+        self.BannedUsers = []
         self.URLHostWhitelist = [
             "youtube.com", 
             "*.youtube.com", 
