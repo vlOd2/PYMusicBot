@@ -1,15 +1,15 @@
-import ModuleCheck
+from Core import ModuleCheck
 import logging
 import sys
 import os
-import Utils
 import discord
-import PYMusicBot
-import Config
-import Updater
-import Constants
+from Core import Utils
+from Core import PYMusicBot
+from Core import Config
+from Core import Constants
+from Core.CustomColorFormatter import CustomColorFormatter
+from Updater import Updater
 from Commands import *
-from CustomColorFormatter import CustomColorFormatter
 
 LOGGER_FORMAT = {
     "fmt": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s", 

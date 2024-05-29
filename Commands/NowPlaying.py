@@ -1,11 +1,11 @@
 import discord
-import EmbedUtils
-import Constants
+from Core import EmbedUtils
+from Core import Constants
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import formated_time, progress_bar
 from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing_check
-from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
-from Utils import formated_time, progress_bar
 
 def _get_embed(source : MediaSource) -> discord.Embed:
     duration = formated_time(source.duration) if source.duration != 0 else ":red_circle: Live"

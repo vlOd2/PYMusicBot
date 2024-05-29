@@ -1,8 +1,7 @@
 import discord
-import EmbedUtils
-import logging
+from Core import EmbedUtils
+from Core.PYMusicBot import PYMusicBot
 from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing_check, channel_check
-from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 
 @definecmd("repeat", 

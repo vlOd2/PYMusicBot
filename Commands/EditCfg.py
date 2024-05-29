@@ -1,12 +1,12 @@
 # Janky code ahead!
 import discord
-import EmbedUtils
 import typing
+from Core import EmbedUtils
+from Core.PYMusicBot import PYMusicBot
+from Core.Config import _CONFIG, ConfigInstance as Config
+from Core.Utils import friendly_str_to_bool
 from discord import app_commands
 from .Util.CommandUtils import definecmd, admin_check, guild_user_check
-from PYMusicBot import PYMusicBot
-from Config import _CONFIG, ConfigInstance as Config
-from Utils import friendly_str_to_bool
 
 _CONFIG_TYPE_HINTS : dict[str, typing.Any] = typing.get_type_hints(_CONFIG)
 

@@ -1,8 +1,8 @@
 # Utilities used by commands or similar
 import inspect
 import discord
-import EmbedUtils
-from Config import ConfigInstance as Config
+from Core import EmbedUtils
+from Core.Config import ConfigInstance as Config
 from discord.app_commands import commands
 from Player.PlayerInstance import PlayerInstance
 

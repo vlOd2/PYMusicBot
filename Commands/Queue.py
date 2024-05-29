@@ -1,12 +1,12 @@
 import discord
-import EmbedUtils
-import Constants
 import math
+from Core import EmbedUtils
+from Core import Constants
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import formated_time 
 from .Util.CommandUtils import definecmd, guild_user_check, fetch_check, playing_check, channel_check
-from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
-from Utils import formated_time 
 
 class _QueueView(discord.ui.View):
     pages : list[discord.Embed]

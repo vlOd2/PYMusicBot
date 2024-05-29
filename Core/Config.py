@@ -1,7 +1,7 @@
 import yaml
 import os
 import logging
-import Constants
+from . import Constants
 from typing import Any
 
 # !!! WARNING !!!

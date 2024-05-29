@@ -1,11 +1,10 @@
-import discord
 import math
 import traceback
 import logging
 import subprocess
 import fnmatch
-import Constants
 import datetime
+from . import Constants
 from urllib.parse import urlparse, urljoin
 
 # To dexrn: don't dexrnerify (i.e don't touch this)

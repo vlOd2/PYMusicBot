@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    import PYMusicBot
+    import Core.PYMusicBot
 
 import discord
 import logging
@@ -15,7 +15,7 @@ class PlayerInstance:
     invoker : discord.Member
     channel : discord.VoiceChannel
     guild : discord.Guild
-    _client : PYMusicBot.PYMusicBot
+    _client : Core.PYMusicBot.PYMusicBot
     _voice_client : discord.VoiceClient
     logger : logging.Logger
     _queue : list[MediaSource]
@@ -29,7 +29,7 @@ class PlayerInstance:
                 invoker : discord.Member, 
                 channel : discord.VoiceChannel,
                 guild : discord.Guild,
-                client : PYMusicBot.PYMusicBot) -> None:
+                client : Core.PYMusicBot.PYMusicBot) -> None:
         self.invoker = invoker
         self.channel = channel
         self.guild = guild

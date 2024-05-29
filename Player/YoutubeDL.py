@@ -2,7 +2,7 @@ import asyncio
 import yt_dlp
 import logging
 from typing import Any
-from Utils import ffprobe_duration
+from Core.Utils import ffprobe_duration
 
 def match_func(info_dict, incomplete=False):
     if "playlist" in info_dict and info_dict["playlist"] == "recommended":

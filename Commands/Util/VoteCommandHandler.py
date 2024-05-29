@@ -1,13 +1,13 @@
 # Handler for vote commands
 import discord
 import logging
-import EmbedUtils
-import Constants
+from Core import EmbedUtils
+from Core import Constants
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import required_votes
 from .CommandUtils import admin_check, fetch_check, playing_check, channel_check
-from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.VotingView import VotingView
-from Utils import required_votes
 from typing import Callable
 
 async def handle_vote(e : discord.Interaction,

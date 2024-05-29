@@ -1,4 +1,4 @@
-from Version import Version
+from Updater.Version import Version
 
 # Constant values that never change
 # You can change these if you want, but it's not recommended

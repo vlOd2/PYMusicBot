@@ -1,8 +1,8 @@
 import discord
-import Constants
+from Core import Constants
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import formated_time
 from .Util.CommandUtils import definecmd, guild_user_check
-from PYMusicBot import PYMusicBot
-from Utils import formated_time
 from time import time
 
 @definecmd("about", 

@@ -3,7 +3,7 @@ import logging
 from Player import YoutubeDL
 from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import DefinedCommands
-from Config import ConfigInstance as Config
+from .Config import ConfigInstance as Config
 from time import time
 
 _DEBUG_NO_TREE_SYNC = False

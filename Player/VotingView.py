@@ -1,12 +1,12 @@
 import discord
-import EmbedUtils
-import Constants
-from PYMusicBot import PYMusicBot
+from Core import EmbedUtils
+from Core import Constants
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import utcnow_with_delta
 from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import channel_check
 from typing import Callable
 from datetime import timedelta
-from Utils import utcnow_with_delta
 
 class VotingView(discord.ui.View):
     InstanceDict : dict[str, discord.ui.View] = {}

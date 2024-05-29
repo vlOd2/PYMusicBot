@@ -1,5 +1,5 @@
 import discord
-import Constants
+from . import Constants
 
 def success(title : str, 
             description : str, 

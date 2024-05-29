@@ -1,10 +1,10 @@
 import discord
-import EmbedUtils
+from Core import EmbedUtils
+from Core.PYMusicBot import PYMusicBot
+from Core.Utils import exstr, url_to_host, matches_in_list
 from .Util.CommandUtils import definecmd, guild_user_check, channel_check, Config
-from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
-from Utils import exstr, url_to_host, matches_in_list
 from .NowPlaying import _get_embed
 
 async def _perform_host_checks(query_host : str, e : discord.Interaction) -> bool:

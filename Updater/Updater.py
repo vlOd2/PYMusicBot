@@ -1,8 +1,8 @@
-import Constants
+from Core import Constants
 import urllib3
 import logging
 import threading
-from Version import Version
+from .Version import Version
 
 _HTTP = urllib3.PoolManager()
 
