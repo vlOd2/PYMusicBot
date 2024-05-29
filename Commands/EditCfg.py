@@ -1,4 +1,4 @@
-# Janky code ahead!
+# This has got to be the shitiest code in the whole bot
 import discord
 import typing
 from Core import EmbedUtils

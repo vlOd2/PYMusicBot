@@ -29,6 +29,56 @@ from typing import Any
 # INSTEAD, RUN THE BOT AND EDIT "config.yml"
 # YOU HAVE BEEN WARNED !!!
 
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
+# !!! WARNING !!!
+# DO NOT MODIFY THIS FILE FOR CONFIGURATION
+# INSTEAD, RUN THE BOT AND EDIT "config.yml"
+# YOU HAVE BEEN WARNED !!!
+
 class _CONFIG:
     YTDLPExtractors : list[str]
     PresenceText : str
@@ -57,7 +107,7 @@ class _CONFIG:
         self.AdminUsers = []
         self.BannedChannels = []
         self.BannedUsers = []
-        self.URLHostWhitelist = [
+        self.URLHostWhitelist = [ # Inb4 a brainrot tiktok kid adds tiktok here
             "youtube.com", 
             "*.youtube.com", 
             "youtu.be",
