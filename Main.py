@@ -20,7 +20,7 @@ def setup_logger__file_logger(formatter):
     if not os.path.exists("logging"):
         os.mkdir("logging")
 
-    handler = logging.FileHandler(f"logging/{Utils.logger_file()}", "w")
+    handler = logging.FileHandler(f"Logs/{Utils.logger_file()}", "w")
     handler.setFormatter(formatter)
     return handler
 
