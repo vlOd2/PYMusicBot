@@ -17,8 +17,8 @@ LOGGER_FORMAT = {
 }
 
 def setup_logger__file_logger(formatter):
-    if not os.path.exists("logging"):
-        os.mkdir("logging")
+    if not os.path.exists("Logs"):
+        os.mkdir("Logs")
 
     handler = logging.FileHandler(f"Logs/{Utils.logger_file()}", "w")
     handler.setFormatter(formatter)
