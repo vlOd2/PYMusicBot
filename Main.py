@@ -1,13 +1,15 @@
 import ModuleCheck
 import logging
-from CustomColorFormatter import CustomColorFormatter
 import sys
 import os
 import Utils
 import discord
 import PYMusicBot
 import Config
+import Updater
+import Constants
 from Commands import *
+from CustomColorFormatter import CustomColorFormatter
 
 LOGGER_FORMAT = {
     "fmt": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s", 
@@ -65,7 +67,8 @@ def main():
     if token == None: 
         return
 
-    logging.getLogger().info("Running PYMusicBot V2... To quit, press Ctrl + C")
+    Updater.check_for_updates()
+    logging.getLogger().info(f"Running PYMusicBot V2 ({Constants.APP_VERSION})... To quit, press Ctrl + C")
     instance = PYMusicBot.PYMusicBot()
     instance.run(token, log_handler=None)
 
