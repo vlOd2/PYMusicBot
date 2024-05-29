@@ -14,7 +14,7 @@ class _QueueView(discord.ui.View):
     msg : discord.Message
 
     def __init__(self, pages : list[discord.Embed]):
-        super().__init__(timeout=Constants.PAGE_VIEW_TIMEOUT)
+        super().__init__(timeout=Constants.QUEUE_VIEW_TIMEOUT)
         if len(pages) == 0: raise ValueError("No pages were provided")
         self.pages = pages
         self.current_page = 0

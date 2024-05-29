@@ -49,7 +49,7 @@ class PlayerInstance:
                                     after : discord.VoiceState):
         if self._terminating: return
 
-        if (len(self.channel.members) - 1) < 1:
+        if self.members_in_voice < 1:
             self.logger.info("Voice state reports we are alone, disconnecting...")
             await self.stop()
             return
@@ -150,3 +150,7 @@ class PlayerInstance:
     def locked(self, value : bool):
         self.logger.info(f"Setting locked state to: {value}")
         self._locked = value
+
+    @property
+    def members_in_voice(self) -> int:
+        return len(self.channel.members) - 1

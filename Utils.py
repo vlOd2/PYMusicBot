@@ -1,71 +1,12 @@
 import discord
+import math
 import traceback
 import logging
 import subprocess
 import fnmatch
 import Constants
+import datetime
 from urllib.parse import urlparse, urljoin
-from datetime import datetime
-
-def friendly_str_to_bool(s : str) -> bool:
-    return s.lower() in [ "true", "yes", "1", "on" ]
-
-def matches_in_list(str : str, list : list[str]) -> bool:
-    return any([fnmatch.fnmatch(str, entry) for entry in list])
-
-def url_to_host(url : str) -> str:
-    try:
-        parse = urlparse(urljoin(url, "/"), scheme="http")
-
-        if not (all([parse.scheme, parse.netloc, parse.path]) and len(parse.netloc.split(".")) > 1):
-            return None
-
-        return parse.netloc
-    except:
-        return None
-
-def required_votes(channel : discord.VoiceChannel) -> int:
-    member_count = len(channel.members) - 1 # exclude the bot
-    required = max(1, round(member_count * Constants.VOTES_REQUIRED_RATIO))
-    return required
-
-def exstr(ex : BaseException) -> str:
-    formated : list[str] = traceback.format_exception(ex)
-    output = ""
-
-    for t in formated:
-        output += f"{t}"
-    
-    logging.getLogger().exception(ex)
-    return output
-
-def progress_bar(progress, block_size) -> str:
-    bar_str = ""
-    currently_at_pos = int(progress * block_size)
-
-    for i in range(block_size):
-        if i == currently_at_pos:
-            bar_str += ":radio_button:"
-        else:
-            bar_str += "▬"
-    
-    return bar_str
-
-def logger_file() -> str:
-    return datetime.now().strftime("%H-%M-%S %d.%m.%Y.log")
-
-def formated_time(timestamp : int) -> str:
-    seconds = timestamp % 60
-    minutes = timestamp // 60 % 60
-    hours = timestamp // 60 // 60 % 24
-    days = timestamp // 60 // 60 // 24
-
-    time_str = ""
-    if days > 0: time_str += f"{days}:"
-    if hours > 0: time_str += f"{hours}:"
-    time_str += f"{minutes:02d}:{seconds:02d}"
-
-    return time_str
 
 # To dexrn: don't dexrnerify (i.e don't touch this)
 def ffprobe_duration(input) -> int:
@@ -98,3 +39,67 @@ def ffprobe_duration(input) -> int:
         logger.error(f"Unable to run FFprobe:")
         logger.exception(ex)
         return -1
+
+def required_votes(member_count, source_duration) -> int:
+    # TODO: Probably not the best way to calculate the amount of required votes
+    duration_votes = min(4, math.floor(math.sqrt(source_duration // math.log(60)) * 0.25) / 10) / 10
+    required = max(1, round(member_count * (Constants.VOTE_BASE_RATIO - duration_votes)))
+    return required
+
+def url_to_host(url : str) -> str:
+    try:
+        parse = urlparse(urljoin(url, "/"), scheme="http")
+
+        if not (all([parse.scheme, parse.netloc, parse.path]) and len(parse.netloc.split(".")) > 1):
+            return None
+
+        return parse.netloc
+    except:
+        return None
+
+def matches_in_list(str : str, list : list[str]) -> bool:
+    return any([fnmatch.fnmatch(str, entry) for entry in list])
+
+def friendly_str_to_bool(s : str) -> bool:
+    return s.lower() in [ "true", "yes", "1", "on" ]
+
+def exstr(ex : BaseException) -> str:
+    formated : list[str] = traceback.format_exception(ex)
+    output = ""
+
+    for t in formated:
+        output += f"{t}"
+    
+    logging.getLogger().exception(ex)
+    return output
+
+def progress_bar(progress, block_size) -> str:
+    bar_str = ""
+    currently_at_pos = int(progress * block_size)
+
+    for i in range(block_size):
+        if i == currently_at_pos:
+            bar_str += ":radio_button:"
+        else:
+            bar_str += "▬"
+    
+    return bar_str
+
+def logger_file() -> str:
+    return datetime.datetime.now().strftime("%H-%M-%S %d.%m.%Y.log")
+
+def formated_time(timestamp : int) -> str:
+    seconds = timestamp % 60
+    minutes = timestamp // 60 % 60
+    hours = timestamp // 60 // 60 % 24
+    days = timestamp // 60 // 60 // 24
+
+    time_str = ""
+    if days > 0: time_str += f"{days}:"
+    if hours > 0: time_str += f"{hours}:"
+    time_str += f"{minutes:02d}:{seconds:02d}"
+
+    return time_str
+
+def utcnow_with_delta(td : datetime.timedelta) -> datetime.datetime:
+    return datetime.datetime.now(datetime.UTC) + td

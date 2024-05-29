@@ -16,5 +16,5 @@ async def cmd_stop(e : discord.Interaction, force : bool = False):
                       lambda player: e.user.id == player.invoker.id,
                       on_success, 
                       "stop", 
-                      "You have instantly stopped the player since you invoked it!",
+                      "You have instantly stopped the player since you invoked it",
                       force)

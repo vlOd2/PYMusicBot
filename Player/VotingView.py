@@ -5,9 +5,11 @@ from PYMusicBot import PYMusicBot
 from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import channel_check
 from typing import Callable
+from datetime import timedelta
+from Utils import utcnow_with_delta
 
 class VotingView(discord.ui.View):
-    InstanceDict : dict[str, discord.ui.View] = {} # Class instance
+    InstanceDict : dict[str, discord.ui.View] = {}
     _action_id : str
     _required : int
     _done : bool
@@ -22,7 +24,7 @@ class VotingView(discord.ui.View):
         - skip
         - stop
         '''
-        super().__init__(timeout=Constants.VOTE_VIEW_TIMEOUT)
+        super().__init__(timeout=Constants.VOTE_TIMEOUT)
         self._action_id = action_id
         self._required = required + 1
         self._done = False
@@ -63,19 +65,34 @@ class VotingView(discord.ui.View):
             self._invoker
         ), view=None)
 
-    async def _update(self):
+    async def update(self):
         if self._done: 
             await self.msg.edit(content="Another vote of this type is already outgoing!", view=None)
             self.stop()
             return
-        
+
+        timeout_timestamp = round(utcnow_with_delta(timedelta(seconds=Constants.VOTE_TIMEOUT)).timestamp())
         await self.msg.edit(content=None, embed=EmbedUtils.state(
             "Vote",
             f"{self._invoker.name} would like to {VotingView._id_to_msg(self._action_id)}\n" +
             f"**{len(self._votes)}** votes out of the needed **{self._required}**\n" +
-            f"This vote will time out in {Constants.VOTE_VIEW_TIMEOUT} seconds if nobody votes",
+            f"This vote will time out in <t:{timeout_timestamp}:R> seconds if nobody votes",
             self._invoker
         ), view=self)
+
+    async def mark_as_timedout(self):
+        await self.on_timeout()
+        self.stop()
+
+    async def mark_as_done(self):
+        self._done = True
+        await self.msg.edit(embed=EmbedUtils.success(
+            "Successful vote",
+            "This vote was successful and has ended. You can't participate anymore!",
+            self._invoker
+        ), view=None)
+        await self._on_success()
+        self.stop()
 
     @discord.ui.button(label="Vote", style=discord.ButtonStyle.success)
     async def _btn_vote_yes(self, e : discord.Interaction, btn : discord.ui.Button):
@@ -94,15 +111,8 @@ class VotingView(discord.ui.View):
             return
         
         self._votes.append(e.user.id)
-        await self._update()
+        await self.update()
         await e.response.edit_message(view=self)
 
         if len(self._votes) >= self._required:
-            self._done = True
-            await self.msg.edit(embed=EmbedUtils.success(
-                "Successful vote",
-                "This vote was successful and has ended. You can't participate anymore!",
-                self._invoker
-            ), view=None)
-            await self._on_success()
-            self.stop()
+            await self.mark_as_done()
