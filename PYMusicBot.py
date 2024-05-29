@@ -6,7 +6,7 @@ from Commands.Util.CommandUtils import DefinedCommands
 from Config import ConfigInstance as Config
 from time import time
 
-_DEBUG_NO_TREE_SYNC = True
+_DEBUG_NO_TREE_SYNC = False
 
 class PYMusicBot(discord.Client):
     tree : discord.app_commands.CommandTree
