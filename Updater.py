@@ -30,8 +30,7 @@ def _check_for_updates():
 
 def get_latest_version() -> Version | None:
     try:
-        with _HTTP.request("GET", Constants.LATEST_VERSION_INFO_URL) as response:
-            latest_ver_raw = response.data.decode()
-        return Version.from_str(latest_ver_raw)
+        response = _HTTP.request("GET", Constants.LATEST_VERSION_INFO_URL)
+        return Version.from_str(response.data.decode())
     except:
         return None

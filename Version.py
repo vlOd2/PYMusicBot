@@ -4,7 +4,7 @@ class Version:
     _revision : int
     _subtype : str
 
-    def __init__(self, major : int, minor : int, revision : int, subtype : str) -> None:
+    def __init__(self, major : int, minor : int, revision : int, subtype : str = None) -> None:
         self._major = major
         self._minor = minor
         self._revision = revision
