@@ -37,7 +37,7 @@ class Version:
     
     def __str__(self) -> str:
         return (f"{self._major}.{self._minor}.{self._revision}" + 
-            f"{f"-{self._subtype}" if self._subtype != None else ""}")
+            (f"-{self._subtype}" if self._subtype != None else ""))
     
     def __eq__(self, other : object) -> bool:
         if not isinstance(other, Version):

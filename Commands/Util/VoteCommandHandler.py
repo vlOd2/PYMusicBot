@@ -39,7 +39,7 @@ async def handle_vote(e : discord.Interaction,
             await view.on_timeout()
 
         await e.response.send_message(embed=EmbedUtils.success(
-            f"Instant vote{" (forced)" if force else ""}", 
+            "Instant vote" + (" (forced)" if force else ""), 
             f"{instant_body} (or not enough people are in the voice chat to start a vote)" if not force else None, 
             e.user))
         await on_success_wrapper()
