@@ -112,7 +112,7 @@ class _CONFIG:
             "*.youtube.com", 
             "youtu.be",
             "cdn.discordapp.com",
-            "*.discordapp.net"
+            "media.discordapp.net"
         ]
         self.FlipURLHostWhitelist = False
 
