@@ -8,8 +8,13 @@ from Player.PlayerInstance import PlayerInstance
 from Player.MediaSource import MediaSource
 
 def _get_embed(source : MediaSource) -> discord.Embed:
-    duration = formated_time(source.duration) if source.duration != 0 else ":red_circle: Live"
+    duration = ":warning: Unknown"
     uploader = f"[`{source.uploader}`]({source.uploader_url})" if source.uploader != None else "N/A"
+
+    if source.duration > 0:
+        duration = formated_time(source.duration)
+    elif source.duration == 0:
+        duration = ":red_circle: Live"
 
     embed = discord.Embed()
     embed.colour = Constants.EMBED_COLOR_STATE

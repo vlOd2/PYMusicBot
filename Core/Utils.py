@@ -30,10 +30,15 @@ def ffprobe_duration(input) -> int:
             return -1
 
         if query_result == "N/A":
-            logger.info("FFprobe reported the query was not applicable")
+            logger.info("FFprobe reported that the query was not applicable")
+            return 0
+
+        result = int(float(query_result) * 1000)
+        if result < 0:
+            logger.warning("FFprobe reported a negative duration?")
             return -1
 
-        return int(float(query_result) * 1000)
+        return result
     except Exception as ex:
         logger.error(f"Unable to run FFprobe:")
         logger.exception(ex)
@@ -41,7 +46,9 @@ def ffprobe_duration(input) -> int:
 
 def required_votes(member_count, source_duration) -> int:
     # TODO: Probably not the best way to calculate the amount of required votes
-    duration_votes = min(4, math.floor(math.sqrt(source_duration // math.log(60)) * 0.25) / 10) / 10
+    duration_votes = 0
+    if source_duration > 0:
+        duration_votes = min(4, math.floor(math.sqrt(source_duration // math.log(60)) * 0.25) / 10) / 10
     required = max(1, round(member_count * (Constants.VOTE_BASE_RATIO - duration_votes)))
     return required
 

@@ -38,6 +38,21 @@ FETCH_TIMEOUT = 60
 _youtubedl = yt_dlp.YoutubeDL(YOUTUBEDL_OPTIONS, auto_init=False)
 _finished_loading = False
 
+def process_duration(data : dict[str, Any]) -> int:
+    duration = -1
+
+    if "duration" in data:
+        duration = int(data["duration"])
+    else: 
+        ffprobe_result = ffprobe_duration(data["url"])
+        if ffprobe_result > 0:
+            duration = ffprobe_result // 1000
+        else:
+            # Encountered an error
+            duration = int(ffprobe_result)
+
+    return duration
+
 async def fetch(query : str) -> dict[str, Any]:
     if not _finished_loading: raise Exception("Extractors haven't been loaded!")
     data = await _fetch(query, True)
@@ -47,11 +62,7 @@ async def fetch(query : str) -> dict[str, Any]:
             raise ValueError("Fetching yielded 0 results")
         data = data["entries"][0]
 
-    data["duration"] = int(data["duration"]) if "duration" in data else int(ffprobe_duration(data["url"]) / 1000)
-    
-    if data["duration"] < 0: 
-        data["duration"] = 0
-
+    data["duration"] = process_duration(data)
     return data
 
 async def fetch_flat(query : str) -> dict[str, Any]:

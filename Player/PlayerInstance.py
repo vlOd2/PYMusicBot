@@ -8,7 +8,7 @@ import discord
 import logging
 import asyncio
 from .MediaSource import MediaSource
-from .FFmpegAudioSource import FFmpegAudioSource
+from .FFMpegAudioSource import get_ffmpeg_audio_src
 from time import time
 
 class PlayerInstance:
@@ -19,7 +19,7 @@ class PlayerInstance:
     _voice_client : discord.VoiceClient
     logger : logging.Logger
     _queue : list[MediaSource]
-    current_source : tuple[MediaSource, FFmpegAudioSource]
+    current_source : tuple[MediaSource, discord.PCMVolumeTransformer]
     _terminating : bool
     _locked : bool
     repeat : bool
@@ -65,11 +65,16 @@ class PlayerInstance:
             self.channel = after.channel
 
     def _play(self, source : MediaSource):
-        self.logger.info(f"Now playing {source.source_url}")
-        raw_source = FFmpegAudioSource.get_instance(source.url, 1)
+        self.logger.info(f"Reading the first 20ms from the audio source to avoid a speed up...")
+        audio_src = get_ffmpeg_audio_src(source.url)
+        audio_src.read()
+
+        audio_src_wrapper = discord.PCMVolumeTransformer(audio_src, 1)
         source.start_time = int(time())
-        self.current_source = (source, raw_source)
-        self._voice_client.play(raw_source, after=self._on_source_end__wrapper)
+        self.current_source = (source, audio_src_wrapper)
+
+        self._voice_client.play(audio_src_wrapper, after=self._on_source_end__wrapper)
+        self.logger.info(f"Now playing {source.source_url}")
 
     # EQBL = Queue Ended But Locked
     async def _qebl_timeout(self):
