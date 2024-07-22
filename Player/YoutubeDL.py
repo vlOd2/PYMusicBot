@@ -16,7 +16,7 @@ YOUTUBEDL_OPTIONS = {
     "check_formats": False,
     "extractor_args": { # Appears to be very fast and reliable
         "youtube": {
-            "player_client": [ "android_embedded" ],
+            "player_client": [ "ios", "ios_music", "ios_creator", "mediaconnect", "tv_embedded" ],
             "player_skip": [ "configs", "webpage", "js" ],
             "skip": [ "translated_subs" ]
         }
