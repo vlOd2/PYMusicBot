@@ -5,7 +5,7 @@ import subprocess
 import fnmatch
 import datetime
 from . import Constants
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin, urlunparse, parse_qs, urlencode
 
 def ffprobe_duration(input) -> int:
     logger = logging.getLogger()
@@ -53,14 +53,25 @@ def required_votes(member_count, source_duration) -> int:
 
 def url_to_host(url : str) -> str:
     try:
-        parse = urlparse(urljoin(url, "/"), scheme="http")
+        parsed = urlparse(urljoin(url, "/"), scheme="http")
 
-        if not (all([parse.scheme, parse.netloc, parse.path]) and len(parse.netloc.split(".")) > 1):
+        if not (all([parsed.scheme, parsed.netloc, parsed.path]) and len(parsed.netloc.split(".")) > 1):
             return None
 
-        return parse.netloc
+        return parsed.netloc
     except:
         return None
+
+def clean_url(url):
+    parsed = urlparse(url)
+    return urlunparse((
+        parsed.scheme,
+        parsed.netloc,
+        parsed.path,
+        parsed.params,
+        urlencode({ key: value[0] for key, value in parse_qs(parsed.query).items() }),
+        parsed.fragment
+    ))
 
 def matches_in_list(str : str, list : list[str]) -> bool:
     return any([fnmatch.fnmatch(str, entry) for entry in list])

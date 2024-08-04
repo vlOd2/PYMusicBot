@@ -89,16 +89,23 @@ class InvAdaptiveFormat:
     clen: str
     lmt: str
     projectionType: int
+    fps: int
     container: str
     encoding: str
+    audioQuality: Optional[str]
+    audioSampleRate: Optional[int]
+    audioChannels: Optional[int]
     qualityLabel: Optional[str]
     resolution: Optional[str]
+    colorInfo: dict[str, str]
 
 class InvFormatStream:
     url: str
     itag: str
     type: str
     quality: str
+    bitrate: str
+    fps: int
     container: str
     encoding: str
     qualityLabel: str
@@ -115,7 +122,11 @@ class InvRecommendedVideo:
     title: str
     videoThumbnails: list[InvThumbnail]
     author: str
+    authorId: str
+    authorUrl: str
+    authorVerified: bool
     lengthSeconds: int
+    viewCount: int
     viewCountText: str
 
 class InvFullVideo:
@@ -141,6 +152,7 @@ class InvFullVideo:
     author: str
     authorId: str
     authorUrl: str
+    authorVerified: bool
     authorThumbnails: list[InvAuthorThumbnail]
     subCountText: str
     lengthSeconds: int
@@ -157,3 +169,8 @@ class InvFullVideo:
     formatStreams: list[InvFormatStream]
     captions: list[InvCaption]
     recommendedVideos: list[InvRecommendedVideo]
+
+    def get_best_audio(self):
+        # for format in self.adaptiveFormats:
+        #     if not format.audioQuality:
+        pass
