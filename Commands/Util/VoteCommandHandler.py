@@ -7,7 +7,7 @@ from Core.PYMusicBot import PYMusicBot
 from Core.Utils import required_votes
 from .CommandUtils import admin_check, fetch_check, playing_check, channel_check
 from Player.PlayerInstance import PlayerInstance
-from Player.VotingView import VotingView
+from Player.VotingView import VotingView, stop_all_votes
 from typing import Callable
 
 async def handle_vote(e : discord.Interaction,
@@ -31,12 +31,10 @@ async def handle_vote(e : discord.Interaction,
     if check_instant(player) or player.members_in_voice <= Constants.VOTE_THRESHOLD or force:
         if force and not await admin_check(e):
             return
+        
         logger.info(f"{e.user.name}/{e.user.id} has done an instant vote: {action_id}")
-
-        # Stop any previous votes
         logger.info("Stopping previous votes...")
-        for view in VotingView.InstanceDict.values():
-            await view.on_timeout()
+        await stop_all_votes()
 
         await e.response.send_message(embed=EmbedUtils.success(
             "Instant vote" + (" (forced)" if force else ""), 

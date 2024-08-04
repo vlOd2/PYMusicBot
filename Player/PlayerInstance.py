@@ -10,6 +10,7 @@ import asyncio
 from .MediaSource import MediaSource
 from .FFMpegAudioSource import get_ffmpeg_audio_src
 from time import time
+from .VotingView import stop_all_votes
 
 class PlayerInstance:
     invoker : discord.Member
@@ -76,7 +77,7 @@ class PlayerInstance:
         self._voice_client.play(audio_src_wrapper, after=self._on_source_end__wrapper)
         self.logger.info(f"Now playing {source.source_url}")
 
-    # EQBL = Queue Ended But Locked
+    # QEBL = Queue Ended But Locked
     async def _qebl_timeout(self):
         await asyncio.sleep(5)
         if self._locked:
@@ -94,6 +95,9 @@ class PlayerInstance:
         else:
             self.logger.info("Ignoring repeat status (probably skipped)")
             self._ignore_repeat = False
+
+        self.logger.info("Stopping all votes")
+        await stop_all_votes()
 
         if len(self._queue) == 0:
             if self._locked:
