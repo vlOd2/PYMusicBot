@@ -7,8 +7,8 @@ def __convert_to_serializable(obj: object) -> object:
     if isinstance(obj, list):
         arr = []
 
-        for v in obj:
-            arr.append(__convert_to_serializable(v))
+        for entry in obj:
+            arr.append(__convert_to_serializable(entry))
 
         return arr
     elif not hasattr(obj, "__dict__"):
@@ -16,8 +16,8 @@ def __convert_to_serializable(obj: object) -> object:
     else:
         fields = {}
 
-        for k, v in obj.__dict__.items():
-            fields[k] = __convert_to_serializable(v)
+        for field, value in obj.__dict__.items():
+            fields[field] = __convert_to_serializable(value)
             
         return fields
 
