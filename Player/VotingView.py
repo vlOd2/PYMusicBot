@@ -1,9 +1,14 @@
+# FUCKING RETARDED LANGUAGE WTF????????
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Core.PYMusicBot import PYMusicBot
+    from Player.PlayerInstance import PlayerInstance
+
 import discord
 from Core import EmbedUtils
 from Core import Constants
-from Core.PYMusicBot import PYMusicBot
 from Core.Utils import utcnow_with_delta
-from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import channel_check
 from typing import Callable
 from datetime import timedelta

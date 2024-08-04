@@ -2,21 +2,21 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    import Core.PYMusicBot
+    from Core.PYMusicBot import PYMusicBot
 
 import discord
 import logging
 import asyncio
 from .MediaSource import MediaSource
 from .FFMpegAudioSource import get_ffmpeg_audio_src
-from time import time
 from .VotingView import stop_all_votes
+from time import time
 
 class PlayerInstance:
     invoker : discord.Member
     channel : discord.VoiceChannel
     guild : discord.Guild
-    _client : Core.PYMusicBot.PYMusicBot
+    _client : PYMusicBot
     _voice_client : discord.VoiceClient
     logger : logging.Logger
     _queue : list[MediaSource]
@@ -30,7 +30,7 @@ class PlayerInstance:
                 invoker : discord.Member, 
                 channel : discord.VoiceChannel,
                 guild : discord.Guild,
-                client : Core.PYMusicBot.PYMusicBot) -> None:
+                client : PYMusicBot) -> None:
         self.invoker = invoker
         self.channel = channel
         self.guild = guild
