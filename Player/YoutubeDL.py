@@ -33,6 +33,7 @@ YOUTUBEDL_OPTIONS = {
     "default_search": "auto",
     "source_address": "0.0.0.0"
 }
+FETCH_TIMEOUT = 60
 
 _youtubedl = yt_dlp.YoutubeDL(YOUTUBEDL_OPTIONS, auto_init=False)
 _finished_loading = False
@@ -69,7 +70,8 @@ async def fetch_flat(query : str) -> dict[str, Any]:
     return await _fetch(query, False)
 
 async def _fetch(query : str, process : bool) -> dict[str, Any]:
-    return await asyncio.get_running_loop().run_in_executor(None, lambda: _youtubedl.extract_info(query, download=False, process=process))
+    future = asyncio.get_running_loop().run_in_executor(None, lambda: _youtubedl.extract_info(query, download=False, process=process))
+    return await asyncio.wait_for(future, FETCH_TIMEOUT)
 
 def load_extractors(extractor_ids : list[str]):
     global _finished_loading

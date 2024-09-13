@@ -2,21 +2,20 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from Core.PYMusicBot import PYMusicBot
+    import Core.PYMusicBot
 
 import discord
 import logging
 import asyncio
 from .MediaSource import MediaSource
 from .FFMpegAudioSource import get_ffmpeg_audio_src
-from .VotingView import stop_all_votes
 from time import time
 
 class PlayerInstance:
     invoker : discord.Member
     channel : discord.VoiceChannel
     guild : discord.Guild
-    _client : PYMusicBot
+    _client : Core.PYMusicBot.PYMusicBot
     _voice_client : discord.VoiceClient
     logger : logging.Logger
     _queue : list[MediaSource]
@@ -30,7 +29,7 @@ class PlayerInstance:
                 invoker : discord.Member, 
                 channel : discord.VoiceChannel,
                 guild : discord.Guild,
-                client : PYMusicBot) -> None:
+                client : Core.PYMusicBot.PYMusicBot) -> None:
         self.invoker = invoker
         self.channel = channel
         self.guild = guild
@@ -77,7 +76,7 @@ class PlayerInstance:
         self._voice_client.play(audio_src_wrapper, after=self._on_source_end__wrapper)
         self.logger.info(f"Now playing {source.source_url}")
 
-    # QEBL = Queue Ended But Locked
+    # EQBL = Queue Ended But Locked
     async def _qebl_timeout(self):
         await asyncio.sleep(5)
         if self._locked:
@@ -95,9 +94,6 @@ class PlayerInstance:
         else:
             self.logger.info("Ignoring repeat status (probably skipped)")
             self._ignore_repeat = False
-
-        self.logger.info("Stopping all votes")
-        await stop_all_votes()
 
         if len(self._queue) == 0:
             if self._locked:
