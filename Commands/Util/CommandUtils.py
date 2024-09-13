@@ -1,10 +1,15 @@
+# FUCKING RETARDED LANGUAGE WTF????????
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Player.PlayerInstance import PlayerInstance
+
 # Utilities used by commands or similar
 import inspect
 import discord
 from Core import EmbedUtils
 from Core.Config import ConfigInstance as Config
 from discord.app_commands import commands
-from Player.PlayerInstance import PlayerInstance
 
 DefinedCommands : list[commands.Command] = []
 
