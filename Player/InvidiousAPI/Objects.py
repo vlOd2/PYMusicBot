@@ -96,6 +96,7 @@ class InvAdaptiveFormat:
     audioSampleRate: Optional[int]
     audioChannels: Optional[int]
     qualityLabel: Optional[str]
+    size: Optional[str]
     resolution: Optional[str]
     colorInfo: dict[str, str]
 
@@ -170,7 +171,22 @@ class InvFullVideo:
     captions: list[InvCaption]
     recommendedVideos: list[InvRecommendedVideo]
 
-    def get_best_audio(self):
-        # for format in self.adaptiveFormats:
-        #     if not format.audioQuality:
-        pass
+    def get_best_audio(self) -> InvAdaptiveFormat | None:
+        best_bitrate : int = 0
+        best_format : InvAdaptiveFormat = None
+
+        for format in self.adaptiveFormats:
+            if not format.audioQuality:
+                continue
+
+            bitrate : int
+            try:
+                bitrate = int(format.bitrate)
+            except:
+                continue
+
+            if bitrate > best_bitrate:
+                best_bitrate = bitrate
+                best_format = format
+
+        return best_format

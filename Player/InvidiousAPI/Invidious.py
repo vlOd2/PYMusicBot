@@ -11,7 +11,7 @@ class InvidiousError(Exception):
 class Invidious:
     _session: ClientSession
 
-    def __init__(self, instance) -> None:
+    def __init__(self, instance : str) -> None:
         self._session = ClientSession(instance)
 
     async def fetch_video(self, id: str, proxy: bool = True) -> InvFullVideo:
@@ -31,7 +31,7 @@ class Invidious:
 
                 video = JSONUtils.json_deserialize(response_data, InvFullVideo)
         except Exception as ex:
-            raise InvidiousError("Failed to perform the fetch request/parse the response") from ex
+            raise InvidiousError("Failed to perform the request") from ex
 
         try:
             if proxy:
