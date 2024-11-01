@@ -63,6 +63,7 @@ class VotingView(discord.ui.View):
                 return "(unknown action)"
 
     async def on_timeout(self):
+        if self._done: return
         self._done = True
         try:
             await self.msg.edit(embed=EmbedUtils.error(
@@ -94,6 +95,7 @@ class VotingView(discord.ui.View):
         self.stop()
 
     async def mark_as_done(self):
+        if self._done: return
         self._done = True
         await self.msg.edit(embed=EmbedUtils.success(
             "Successful vote",
@@ -128,4 +130,5 @@ class VotingView(discord.ui.View):
 
 async def stop_all_votes():
     for view in VotingView.InstanceDict.values():
+        if view._done: continue
         await view.mark_as_timedout()

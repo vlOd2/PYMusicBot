@@ -100,7 +100,7 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
 
     try:
         player.locked = True
-        player.logger.info(f"{e.user.name}/{e.user.id}: Fetching the query \"{query}\"")
+        player.logger.info(f"{e.user.name}/{e.user.id}: Fetching the query \"{query.encode('ascii', 'ignore').decode()}\"")
         await e.response.defer()
 
         async def fetch_completed(task : asyncio.Task[MediaSource]):
@@ -125,7 +125,7 @@ async def cmd_play(e : discord.Interaction, query : str = None, file : discord.A
         try:
             await asyncio.wait_for(fetch_task, Constants.FETCH_TIMEOUT)
         except TimeoutError as ex:
-            player.logger.warning(f"Timed out whilst fetching: {query}")
+            player.logger.warning(f"Timed out whilst fetching: {query.encode('ascii', 'ignore').decode()}")
             await fetch_error(f"Failed to fetch within {Constants.FETCH_TIMEOUT} seconds. Please try again.")
 
     except Exception as ex:

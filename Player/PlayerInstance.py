@@ -129,10 +129,12 @@ class PlayerInstance:
 
     async def stop(self, noremove = False):
         if self._terminating: return
-        self.logger.info("Disconnecting...")
         self._terminating = True
-        await self._voice_client.disconnect(force=True)
-        if not noremove: self._client.players.remove(self)
+        self.logger.info("Disconnecting...")
+        if self._voice_client != None: 
+            await self._voice_client.disconnect(force=True)
+        if not noremove:
+            self._client.players.remove(self)
 
     def skip(self):
         if self.current_source == None: return
