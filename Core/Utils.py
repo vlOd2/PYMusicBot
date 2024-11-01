@@ -7,7 +7,6 @@ import datetime
 from . import Constants
 from urllib.parse import urlparse, urljoin
 
-# To dexrn: don't dexrnerify (i.e don't touch this)
 def ffprobe_duration(input) -> int:
     logger = logging.getLogger()
     args = [ 

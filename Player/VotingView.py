@@ -1,15 +1,20 @@
+# FUCKING RETARDED LANGUAGE WTF????????
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Core.PYMusicBot import PYMusicBot
+    from Player.PlayerInstance import PlayerInstance
+
 import discord
 from Core import EmbedUtils
 from Core import Constants
-from Core.PYMusicBot import PYMusicBot
 from Core.Utils import utcnow_with_delta
-from Player.PlayerInstance import PlayerInstance
 from Commands.Util.CommandUtils import channel_check
 from typing import Callable
 from datetime import timedelta
 
 class VotingView(discord.ui.View):
-    InstanceDict : dict[str, discord.ui.View] = {}
+    InstanceDict : dict[str, "VotingView"] = {}
     _action_id : str
     _required : int
     _done : bool
@@ -59,11 +64,15 @@ class VotingView(discord.ui.View):
 
     async def on_timeout(self):
         self._done = True
-        await self.msg.edit(embed=EmbedUtils.error(
-            "Vote timed out",
-            "This vote has timed out. You can't participate anymore!",
-            self._invoker
-        ), view=None)
+        try:
+            await self.msg.edit(embed=EmbedUtils.error(
+                "Vote timed out",
+                "This vote has timed out. You can't participate anymore!",
+                self._invoker
+            ), view=None)
+        except:
+            # Janky work-around
+            pass
 
     async def update(self):
         if self._done: 
@@ -116,3 +125,7 @@ class VotingView(discord.ui.View):
 
         if len(self._votes) >= self._required:
             await self.mark_as_done()
+
+async def stop_all_votes():
+    for view in VotingView.InstanceDict.values():
+        await view.mark_as_timedout()
