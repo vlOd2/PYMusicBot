@@ -4,7 +4,7 @@ from Updater.Version import Version
 # You can change these if you want, but it's not recommended
 
 # Fundamental
-APP_VERSION = Version(2, 0, 1)
+APP_VERSION = Version(2, 0, 2)
 CONFIG_FILE_NAME = "config.yml"
 LATEST_VERSION_INFO_URL = "https://raw.githubusercontent.com/vlOd2/PYMusicBot/main/LatestVersion.info"
 
